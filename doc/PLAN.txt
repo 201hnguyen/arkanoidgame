@@ -14,39 +14,39 @@ all the blocks), of which the avatar will move toward at the end of the level to
 2. General description of different levels I intend to build:
 I plan on having 3 levels. Each level will have a 10x10 bricks layout. Below are the levels' brick configurations.
 LEVEL 1:
-3 0 3 0 3 0 1 0 1 0
-0 2 0 2 0 2 0 2 0 2
-1 0 1 0 1 0 3 0 3 0
-0 2 0 2 0 2 0 2 0 2
-3 0 3 0 3 0 1 0 1 0
-0 2 0 2 0 2 0 2 0 2
-1 0 1 0 1 0 3 0 3 0
-0 2 0 2 0 2 0 2 0 2
-3 0 3 0 3 0 1 0 1 0
-0 2 0 2 0 2 0 2 0 2
+1 1 1 1 1 2 2 2 2 2
+0 2 2 2 0 0 1 1 1 0
+0 0 3 0 3 3 0 3 0 0
+0 2 2 2 0 0 1 1 1 0
+1 1 1 1 1 2 2 2 2 2
+0 2 2 2 0 0 1 1 1 0
+0 0 3 0 3 3 0 3 0 0
+0 2 2 2 0 0 1 1 1 0
+1 1 1 1 1 2 2 2 2 2
+0 2 2 2 0 0 1 1 1 0
 
 LEVEL 2:
-3 1 2 3 1 2 3 1 2 3
-0 3 3 3 0 0 3 3 3 0
-0 1 1 1 0 0 1 1 1 0
-0 2 2 2 0 0 2 2 2 0
-3 1 2 3 1 2 3 1 2 3
-3 1 2 3 1 2 3 1 2 3
-0 3 3 3 0 0 3 3 3 0
-0 1 1 1 0 0 1 1 1 0
-0 2 2 2 0 0 2 2 2 0
-3 1 2 3 1 2 3 1 2 3
+3 1 1 1 2 2 1 1 1 3
+0 2 2 2 0 3 2 2 2 0
+0 2 2 2 3 0 2 2 2 0
+0 2 2 2 0 3 2 2 2 0
+1 3 1 3 2 2 3 1 3 1
+1 3 1 3 2 2 3 1 3 1
+0 2 2 2 0 1 2 2 2 0
+0 2 2 2 1 0 2 2 2 0
+0 2 2 2 0 1 2 2 2 0
+3 1 2 1 2 2 3 2 3 1
 
 LEVEL 3:
 3 3 3 3 3 3 3 3 3 3
 3 3 3 3 3 3 3 3 3 3
 3 3 3 3 3 3 3 3 3 3
-1 2 3 1 2 3 1 2 3 1
+3 2 3 3 2 3 3 2 3 3
 2 2 2 2 2 2 2 2 2 2
 2 2 2 2 2 2 2 2 2 2
-2 3 1 2 3 1 2 3 1 2
+2 1 1 2 1 1 2 1 1 2
 1 1 1 1 1 1 1 1 1 1
-3 2 1 3 2 1 3 2 1 3
+3 3 1 3 3 1 3 3 1 3
 1 3 3 1 3 3 1 3 3 1
 
 As shown above, the first level has the least number of bricks (0's indicate no bricks in that space), and
