@@ -3,14 +3,12 @@ package game;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundSize;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -20,6 +18,10 @@ public class Level {
     private Character myMainCharacter;
     private Level myNextLevel;
     private Ball myBall;
+    private Group myRoot;
+    private ArrayList<Brick> myBricks = new ArrayList<>();
+    int[] myBallDirection = {1,-1};
+
 
     public Level(Stage stage, String bricksConfigPath, Paint background) throws Exception {
         myStage = stage;
@@ -38,28 +40,36 @@ public class Level {
         return myBall;
     }
 
+    public Group getRoot() {
+        return myRoot;
+    }
+
+    public ArrayList<Brick> getBricks() {
+        return myBricks;
+    }
+
     public void setNextLevel(Level nextLevel) {
         myNextLevel = nextLevel;
     }
 
     private Scene setupScene(String bricksConfigPath, Paint background) throws Exception {
-        Group root = new Group();
-        setupBricksConfig(bricksConfigPath, root);
+        myRoot = new Group();
+        setupBricksConfig(bricksConfigPath, myRoot);
 
         myMainCharacter = new Character(Character.CharacterEnum.HARRY_POTTER);
-        myMainCharacter.setCharacterAsPaddle(root);
+        myMainCharacter.setCharacterAsPaddle(myRoot);
 
         myBall = new Ball();
         myBall.resetBall(myMainCharacter);
-        myBall.addBallToScreen(root);
+        myBall.addBallToScreen(myRoot);
         Structure door = new Structure(Structure.StructureEnum.DOOR);
-        door.setDoor(root);
+        door.setDoor(myRoot);
 
         Button button = new Button("Go to next scene"); //TODO: delete this later; only here for easier navigation now
         button.setOnAction(e -> GameMain.resetStage(myNextLevel));
-        root.getChildren().add(button);
+        myRoot.getChildren().add(button);
 
-        Scene scene = new Scene(root, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT, background);
+        Scene scene = new Scene(myRoot, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT, background);
         scene.setOnMouseMoved(e -> handleMouseInput(e.getX()));
         return scene;
     }
@@ -82,10 +92,11 @@ public class Level {
         int xCoordinateForBrick = 0;
         for (int i=0; i<rowConfigurationArray.length; i++) {
             Brick brick = new Brick(rowConfigurationArray[i]);
-            brick.getBricksImageView().setX(xCoordinateForBrick);
-            brick.getBricksImageView().setY(yCoordinateForRow);
+            brick.getBrickImageView().setX(xCoordinateForBrick);
+            brick.getBrickImageView().setY(yCoordinateForRow);
             xCoordinateForBrick += Brick.BRICK_WIDTH;
-            root.getChildren().add(brick.getBricksImageView());
+            myBricks.add(brick);
+            root.getChildren().add(brick.getBrickImageView());
         }
     }
 
@@ -96,5 +107,4 @@ public class Level {
                 myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH - myMainCharacter.getCharacterImageView().getFitWidth());
             }
     }
-
 }

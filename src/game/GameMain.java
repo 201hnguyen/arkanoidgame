@@ -50,15 +50,16 @@ public class GameMain extends Application {
         myStage.setResizable(false);
         myStage.show();
 
-        var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> startLevel(level, SECOND_DELAY));
+        var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> stepThroughLevel(level, SECOND_DELAY));
         var animation = new Timeline();
         animation.setCycleCount(Timeline.INDEFINITE);
         animation.getKeyFrames().add(frame);
         animation.play();
     }
 
-    private static void startLevel(Level level, double elapsedTime) {
-        level.getBall().setBallMotion(level.getBall(), elapsedTime, level.getMainCharacter());
+    private static void stepThroughLevel(Level level, double elapsedTime) {
+        level.getBall().setBallMotion(elapsedTime, level.getMainCharacter());
+        level.getBall().bounceOffBricks(level.getBricks(), level.getRoot());
     }
 }
 

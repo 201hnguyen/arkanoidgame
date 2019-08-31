@@ -1,8 +1,11 @@
 package game;
 
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import java.util.ArrayList;
 
 public class Ball {
     private static final String BALL_IMAGE = "ball.png";
@@ -34,9 +37,9 @@ public class Ball {
         this.getBallImageView().setY(character.getCharacterImageView().getBoundsInParent().getMinY() - BALL_SIZE);
     }
 
-    public void setBallMotion(Ball ball, double elapsedTime, Character character) {
+    public void setBallMotion(double elapsedTime, Character character) {
 
-        ImageView ballImageView = ball.getBallImageView();
+        ImageView ballImageView = this.getBallImageView();
         ballImageView.setX(ballImageView.getX() + ballDirection[0] * BALL_SPEED * elapsedTime);
         ballImageView.setY(ballImageView.getY() + ballDirection[1] * BALL_SPEED * elapsedTime);
 
@@ -60,6 +63,24 @@ public class Ball {
                 ball.getBoundsInParent().getMaxY() <= character.getBoundsInParent().getMinY()) {
             ballDirection[1] *= -1;
         }
+    }
+
+    public void bounceOffBricks(ArrayList<Brick> bricks, Group root) {
+        Brick brickToRemove = identifyHitBrick(this.getBallImageView(), bricks);
+        if (brickToRemove != null) {
+            bricks.remove(brickToRemove);
+            System.out.println("Removed brick from arraylist");
+            root.getChildren().remove(brickToRemove);
+        }
+    }
+
+    private Brick identifyHitBrick(ImageView ball, ArrayList<Brick> bricks) {
+        for (Brick brick : bricks) {
+            if (ball.getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
+                return brick;
+            }
+        }
+        return null;
     }
 
 }
