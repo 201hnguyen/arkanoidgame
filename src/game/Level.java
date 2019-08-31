@@ -1,20 +1,20 @@
 package game;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.File;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class Level {
-    private static final int BALL_SPEED = 100;
     private Stage myStage;
     private Scene myScene;
     private Character myMainCharacter;
@@ -55,7 +55,7 @@ public class Level {
         Structure door = new Structure(Structure.StructureEnum.DOOR);
         door.setDoor(root);
 
-        Button button = new Button("Go to next scene");
+        Button button = new Button("Go to next scene"); //TODO: delete this later; only here for easier navigation now
         button.setOnAction(e -> GameMain.resetStage(myNextLevel));
         root.getChildren().add(button);
 
@@ -90,7 +90,11 @@ public class Level {
     }
 
     private void handleMouseInput(double x) {
-        myMainCharacter.getCharacterImageView().setX(x);
+        //TODO: Set bounds so character can't go out of bounds of window
+            myMainCharacter.getCharacterImageView().setX(x);
+            if (myMainCharacter.getCharacterImageView().getBoundsInLocal().getMaxX() >= GameMain.SCENE_WIDTH) {
+                myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH - myMainCharacter.getCharacterImageView().getFitWidth());
+            }
     }
 
 }

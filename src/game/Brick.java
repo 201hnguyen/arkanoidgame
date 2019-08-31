@@ -8,16 +8,16 @@ public class Brick {
     public static final int BRICK_WIDTH = 100;
     public static final int BRICK_HEIGHT = 50;
 
-    private static int myHitsId;
+    private static int myHitsRemaining;
     private static ImageView myBrickImageView;
 
     public Brick(int hitsId) {
-        myHitsId = hitsId;
-        if (myHitsId == 1) {
+        myHitsRemaining = hitsId;
+        if (myHitsRemaining == 1) {
             myBrickImageView = createBrick(BrickColor.BROWN);
-        } else if (myHitsId == 2) {
+        } else if (myHitsRemaining == 2) {
             myBrickImageView = createBrick(BrickColor.GREEN);
-        } else if (myHitsId == 3) {
+        } else if (myHitsRemaining == 3) {
             myBrickImageView = createBrick(BrickColor.PURPLE);
         } else {
             myBrickImageView = createBrick(BrickColor.NONE);
@@ -32,8 +32,8 @@ public class Brick {
         return brick;
     }
 
-    public int getBrickHitsId() {
-        return myHitsId;
+    public int getBrickHitsRemaining() {
+        return myHitsRemaining;
     }
 
     public ImageView getBricksImageView() {

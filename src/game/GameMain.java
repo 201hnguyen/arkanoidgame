@@ -39,7 +39,7 @@ public class GameMain extends Application {
 
         myLevelOne.setNextLevel(myLevelTwo);
         myLevelTwo.setNextLevel(myLevelThree);
-        myLevelThree.setNextLevel(myLevelOne); //TODO: delete this later; only here for easier navigation now
+        myLevelThree.setNextLevel(myLevelOne);
 
         resetStage(myLevelOne);
     }
@@ -47,6 +47,7 @@ public class GameMain extends Application {
     public static void resetStage(Level level) {
         myStage.setScene(level.getScene());
         myStage.setTitle("TODO: Change title");
+        myStage.setResizable(false);
         myStage.show();
 
         var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> startLevel(level, SECOND_DELAY));
@@ -57,7 +58,7 @@ public class GameMain extends Application {
     }
 
     private static void startLevel(Level level, double elapsedTime) {
-        level.getBall().setBallMotion(level.getBall(), elapsedTime);
+        level.getBall().setBallMotion(level.getBall(), elapsedTime, level.getMainCharacter());
     }
 }
 
