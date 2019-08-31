@@ -1,20 +1,25 @@
 package game;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class Level {
+    private static final int BALL_SPEED = 100;
     private Stage myStage;
     private Scene myScene;
     private Character myMainCharacter;
-    private Scene myNextScene;
+    private Level myNextLevel;
+    private Ball myBall;
 
     public Level(Stage stage, String bricksConfigPath, Paint background) throws Exception {
         myStage = stage;
@@ -29,8 +34,12 @@ public class Level {
         return myMainCharacter;
     }
 
-    public void setNextScene(Scene scene) {
-        myNextScene = scene;
+    public Ball getBall() {
+        return myBall;
+    }
+
+    public void setNextLevel(Level nextLevel) {
+        myNextLevel = nextLevel;
     }
 
     private Scene setupScene(String bricksConfigPath, Paint background) throws Exception {
@@ -40,14 +49,14 @@ public class Level {
         myMainCharacter = new Character(Character.CharacterEnum.HARRY_POTTER);
         myMainCharacter.setCharacterAsPaddle(root);
 
-        Ball mainBall = new Ball();
-        mainBall.resetBall(myMainCharacter);
-        mainBall.addBallToScreen(root);
+        myBall = new Ball();
+        myBall.resetBall(myMainCharacter);
+        myBall.addBallToScreen(root);
         Structure door = new Structure(Structure.StructureEnum.DOOR);
         door.setDoor(root);
 
         Button button = new Button("Go to next scene");
-        button.setOnAction(e -> myStage.setScene(myNextScene));
+        button.setOnAction(e -> GameMain.resetStage(myNextLevel));
         root.getChildren().add(button);
 
         Scene scene = new Scene(root, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT, background);
@@ -83,4 +92,5 @@ public class Level {
     private void handleMouseInput(double x) {
         myMainCharacter.getCharacterImageView().setX(x);
     }
+
 }

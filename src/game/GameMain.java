@@ -3,17 +3,10 @@ package game;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.io.File;
-import java.util.Scanner;
-import java.util.stream.Stream;
 
 public class GameMain extends Application {
     public static final Paint LEVEL_ONE_BACKGROUND = Color.DARKGRAY.darker().darker();
@@ -24,13 +17,14 @@ public class GameMain extends Application {
     public static final String LEVEL_THREE_BRICKS_CONFIG_PATH = "resources/level3.txt";
     public static final int SCENE_WIDTH = 1000;
     public static final int SCENE_HEIGHT = 800;
-    public static final int BRICK_WIDTH = 100;
-    public static final int BRICK_HEIGHT = 50;
+    public static final int FRAMES_PER_SECOND = 60;
+    public static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
+    public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
 
     private static Stage myStage;
-    private static Scene myLevelOneScene;
-    private static Scene myLevelTwoScene;
-    private static Scene myLevelThreeScene;
+    private static Level myLevelOne;
+    private static Level myLevelTwo;
+    private static Level myLevelThree;
 
     public static void main(String[] args) {
         launch(args);
@@ -39,22 +33,31 @@ public class GameMain extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         myStage = stage;
-        Level levelOne = new Level(myStage, LEVEL_ONE_BRICKS_CONFIG_PATH, LEVEL_ONE_BACKGROUND);
-        Level levelTwo = new Level(myStage, LEVEL_TWO_BRICKS_CONFIG_PATH, LEVEL_TWO_BACKGROUND);
-        Level levelThree = new Level(myStage, LEVEL_THREE_BRICKS_CONFIG_PATH, LEVEL_THREE_BACKGROUND);
+        myLevelOne = new Level(myStage, LEVEL_ONE_BRICKS_CONFIG_PATH, LEVEL_ONE_BACKGROUND);
+        myLevelTwo = new Level(myStage, LEVEL_TWO_BRICKS_CONFIG_PATH, LEVEL_TWO_BACKGROUND);
+        myLevelThree = new Level(myStage, LEVEL_THREE_BRICKS_CONFIG_PATH, LEVEL_THREE_BACKGROUND);
 
-        myLevelOneScene = levelOne.getScene();
-        myLevelTwoScene = levelTwo.getScene();
-        myLevelThreeScene = levelThree.getScene();
+        myLevelOne.setNextLevel(myLevelTwo);
+        myLevelTwo.setNextLevel(myLevelThree);
+        myLevelThree.setNextLevel(myLevelOne); //TODO: delete this later; only here for easier navigation now
 
-        levelOne.setNextScene(myLevelTwoScene);
-        levelTwo.setNextScene(myLevelThreeScene);
-        levelThree.setNextScene(myLevelOneScene);
-
-        stage.setScene(myLevelOneScene);
-        stage.setTitle("Game");
-        stage.show();
+        resetStage(myLevelOne);
     }
 
+    public static void resetStage(Level level) {
+        myStage.setScene(level.getScene());
+        myStage.setTitle("TODO: Change title");
+        myStage.show();
+
+        var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> startLevel(level, SECOND_DELAY));
+        var animation = new Timeline();
+        animation.setCycleCount(Timeline.INDEFINITE);
+        animation.getKeyFrames().add(frame);
+        animation.play();
+    }
+
+    private static void startLevel(Level level, double elapsedTime) {
+        level.getBall().setBallMotion(level.getBall(), elapsedTime);
+    }
 }
 

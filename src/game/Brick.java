@@ -35,6 +35,7 @@ public class Brick {
     public int getBrickHitsId() {
         return myHitsId;
     }
+
     public ImageView getBricksImageView() {
         return myBrickImageView;
     }
