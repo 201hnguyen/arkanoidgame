@@ -65,22 +65,5 @@ public class Ball {
         }
     }
 
-    public void bounceOffBricks(ArrayList<Brick> bricks, Group root) {
-        Brick brickToRemove = identifyHitBrick(this.getBallImageView(), bricks);
-        if (brickToRemove != null) {
-            bricks.remove(brickToRemove);
-            System.out.println("Removed brick from arraylist");
-            root.getChildren().remove(brickToRemove);
-        }
-    }
-
-    private Brick identifyHitBrick(ImageView ball, ArrayList<Brick> bricks) {
-        for (Brick brick : bricks) {
-            if (ball.getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
-                return brick;
-            }
-        }
-        return null;
-    }
 
 }

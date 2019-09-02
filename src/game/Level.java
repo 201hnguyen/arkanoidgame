@@ -102,6 +102,24 @@ public class Level {
         }
     }
 
+    public void bounceOffBricks() {
+        Brick brickToRemove = identifyHitBrick(this.getBall().getBallImageView());
+        if (brickToRemove != null) {
+            myBricks.remove(brickToRemove);
+            System.out.println("Removed brick from arraylist");
+            myRoot.getChildren().remove(brickToRemove);
+        }
+    }
+
+    private Brick identifyHitBrick(ImageView ball) {
+        for (Brick brick : myBricks) {
+            if (ball.getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
+                return brick;
+            }
+        }
+        return null;
+    }
+
     private void handleMouseInput(double x, double y) {
         //TODO: Set bounds so character can't go out of bounds of window
 //        myMainCharacter.getCharacterImageView().setX(x);
