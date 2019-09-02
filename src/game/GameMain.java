@@ -58,7 +58,7 @@ public class GameMain extends Application {
     }
 
     private static void stepThroughLevel(Level level, double elapsedTime) {
-        level.getBall().setBallMotion(elapsedTime, level.getMainCharacter());
+//        level.getBall().setBallMotion(elapsedTime, level.getMainCharacter());
         level.getBall().bounceOffBricks(level.getBricks(), level.getRoot());
     }
 }

@@ -70,7 +70,7 @@ public class Level {
         myRoot.getChildren().add(button);
 
         Scene scene = new Scene(myRoot, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT, background);
-        scene.setOnMouseMoved(e -> handleMouseInput(e.getX()));
+        scene.setOnMouseMoved(e -> handleMouseInput(e.getX(), e.getY()));
         return scene;
     }
 
@@ -102,11 +102,13 @@ public class Level {
         }
     }
 
-    private void handleMouseInput(double x) {
+    private void handleMouseInput(double x, double y) {
         //TODO: Set bounds so character can't go out of bounds of window
-            myMainCharacter.getCharacterImageView().setX(x);
-            if (myMainCharacter.getCharacterImageView().getBoundsInLocal().getMaxX() >= GameMain.SCENE_WIDTH) {
-                myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH - myMainCharacter.getCharacterImageView().getFitWidth());
-            }
+//        myMainCharacter.getCharacterImageView().setX(x);
+//        if (myMainCharacter.getCharacterImageView().getBoundsInLocal().getMaxX() >= GameMain.SCENE_WIDTH) {
+//            myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH - myMainCharacter.getCharacterImageView().getFitWidth());
+//        }
+        myBall.getBallImageView().setX(x);
+        myBall.getBallImageView().setY(y);
     }
 }
