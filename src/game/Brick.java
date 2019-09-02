@@ -21,8 +21,6 @@ public class Brick {
             myBrickImageView = createBrick(BrickColor.GREEN);
         } else if (myBrickId == 3) {
             myBrickImageView = createBrick(BrickColor.PURPLE);
-        } else {
-            myBrickImageView = createBrick(BrickColor.NONE);
         }
     }
 
@@ -43,7 +41,6 @@ public class Brick {
     }
 
     public enum BrickColor {
-        NONE ("transparentbrick.png"),
         GREEN ("greenbrick.png"),
         BROWN ("brownbrick.png"),
         PURPLE ("purplebrick.png");

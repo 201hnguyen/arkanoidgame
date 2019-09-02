@@ -91,12 +91,14 @@ public class Level {
         int[] rowConfigurationArray = Stream.of(rowConfiguration.split(" " )).mapToInt(Integer::parseInt).toArray();
         int xCoordinateForBrick = 0;
         for (int i=0; i<rowConfigurationArray.length; i++) {
-            Brick brick = new Brick(rowConfigurationArray[i]);
-            brick.getBrickImageView().setX(xCoordinateForBrick);
-            brick.getBrickImageView().setY(yCoordinateForRow);
+            if (rowConfigurationArray[i] != 0) {
+                Brick brick = new Brick(rowConfigurationArray[i]);
+                brick.getBrickImageView().setX(xCoordinateForBrick);
+                brick.getBrickImageView().setY(yCoordinateForRow);
+                myBricks.add(brick);
+                root.getChildren().add(brick.getBrickImageView());
+            }
             xCoordinateForBrick += Brick.BRICK_WIDTH;
-            myBricks.add(brick);
-            root.getChildren().add(brick.getBrickImageView());
         }
     }
 
