@@ -3,6 +3,7 @@ package game;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 
 public class Character {
     public static final int CHARACTER_HEIGHT = 150;
@@ -17,7 +18,7 @@ public class Character {
         myCharacterImageView.setFitHeight(CHARACTER_HEIGHT);
     }
 
-    public void setCharacterAsPaddle(Group root) {
+    public void setCharacterAsPaddle(Pane root) {
         this.getCharacterImageView().setX(GameMain.SCENE_WIDTH / 2 - this.getCharacterImageView().getBoundsInLocal().getWidth() / 2);
         this.getCharacterImageView().setY(GameMain.SCENE_HEIGHT - this.getCharacterImageView().getBoundsInLocal().getHeight());
         root.getChildren().add(this.getCharacterImageView());

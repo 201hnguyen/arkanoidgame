@@ -8,19 +8,19 @@ public class Brick {
     public static final int BRICK_WIDTH = 100;
     public static final int BRICK_HEIGHT = 50;
 
-    private static int myBrickId;
-    private static int myHitsRemaining;
-    private static ImageView myBrickImageView;
+    private int myBrickId;
+    private int myHitsRemaining;
+    private ImageView myBrickImageView;
 
     public Brick(int hitsId) {
         myBrickId = hitsId;
         myHitsRemaining = hitsId;
         if (myBrickId == 1) {
-            myBrickImageView = createBrick(BrickColor.BROWN);
+            myBrickImageView = createBrick(BrickColor.BRICK1);
         } else if (myBrickId == 2) {
-            myBrickImageView = createBrick(BrickColor.GREEN);
+            myBrickImageView = createBrick(BrickColor.BRICK2);
         } else if (myBrickId == 3) {
-            myBrickImageView = createBrick(BrickColor.PURPLE);
+            myBrickImageView = createBrick(BrickColor.BRICK3);
         }
     }
 
@@ -32,7 +32,11 @@ public class Brick {
         return brick;
     }
 
-    public int getBrickHitsRemaining() {
+    public void decreaseHitsRemaining() {
+        myHitsRemaining--;
+    }
+
+    public int getHitsRemaining() {
         return myHitsRemaining;
     }
 
@@ -41,9 +45,9 @@ public class Brick {
     }
 
     public enum BrickColor {
-        GREEN ("greenbrick.png"),
-        BROWN ("brownbrick.png"),
-        PURPLE ("purplebrick.png");
+        BRICK1 ("brick1.png"),
+        BRICK2 ("brick2.png"),
+        BRICK3 ("brick3.png");
 
         private String myAssociatedFileName;
         BrickColor(String fileName) {

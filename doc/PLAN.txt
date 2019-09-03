@@ -9,10 +9,10 @@ idea of framing the game as some kind of narrative is definitely something that 
 give a bit of an extra dimension to it. To play with this idea of creating a narrative, I'm planning on building
 a Harry Potter themed version of Breakout, where Harry casts a spell that forms the paddle (see
 "harrypotter.png" file for a visual). I am also planning on making a door at the top of the screen (above
-all the blocks), of which the avatar will move toward at the end of the level to advance to the next level.
+all the blocks), of which the avatar will move toward at the end of the gameScene to advance to the next gameScene.
 
 2. General description of different levels I intend to build:
-I plan on having 3 levels. Each level will have a 10x10 bricks layout. Below are the levels' brick configurations.
+I plan on having 3 levels. Each gameScene will have a 10x10 bricks layout. Below are the levels' brick configurations.
 LEVEL 1:
 1 1 1 1 1 2 2 2 2 2
 0 2 2 2 0 0 1 1 1 0
@@ -49,11 +49,11 @@ LEVEL 3:
 3 3 1 3 3 1 3 3 1 3
 1 3 3 1 3 3 1 3 3 1
 
-As shown above, the first level has the least number of bricks (0's indicate no bricks in that space), and
-the lowest ratio of level 3 bricks; the second level has more bricks than the first one (but the entire
-structure is still not filled), and also has a higher ratio of level 3 bricks; then, the most difficult
-level's structure is entirely filled up with bricks, and there are also more level 3 bricks compared to
-level 1 and level 2 bricks. I also plan to make the ball move 1.5-2x faster with each increment in difficulty.
+As shown above, the first gameScene has the least number of bricks (0's indicate no bricks in that space), and
+the lowest ratio of gameScene 3 bricks; the second gameScene has more bricks than the first one (but the entire
+structure is still not filled), and also has a higher ratio of gameScene 3 bricks; then, the most difficult
+gameScene's structure is entirely filled up with bricks, and there are also more gameScene 3 bricks compared to
+gameScene 1 and gameScene 2 bricks. I also plan to make the ball move 1.5-2x faster with each increment in difficulty.
 
 3. Several different bricks I want to create:
 Hits-wise, I will have 3 types of bricks: one color brick that takes 1 hit to break, one that takes 2 hits to
@@ -62,7 +62,7 @@ types #1, #2, #3, #4, #5, and #6. Type #1 and #4 will look and work exactly the 
 surface, a #4 brick is a #1 brick with a hidden lightning power (see power ups section). Likewise, #2 and #5
 will look and work the same, but #5 will contain the hidden horn power (see power ups section). Then, #3 and #6
 will look and work the same, but #6 will contain the hidden potion power (see power ups section). When
-implementing, I will merely pick a few #1, #2, and #3 bricks from the level configurations above and convert
+implementing, I will merely pick a few #1, #2, and #3 bricks from the gameScene configurations above and convert
 them to #4, #5, and #6 bricks.
 
 4. Several different power ups I want to create:
@@ -79,7 +79,7 @@ Apart from the 'L', 'R', and '1-9' keys required, I also want to implement the '
 (so basically, there is no way for the ball to fall off the bottom of the screen). I also plan on implementing
 the 'C' code that automatically clears all bricks in a single row. If I have time, I also want to see if I can
 do a 'B' cheat code (more of a funny one). This one will simulate the effect of Harry losing his glasses,
-so the entire screen will just turn blurry and you play the rest of the level in blurry mode.
+so the entire screen will just turn blurry and you play the rest of the gameScene in blurry mode.
 
 6. Something extra I intend to add and why I think this is a substantial addition:
 I want to make certain sections of the walls "dead sections," meaning that, if the ball bounces off this very small,
