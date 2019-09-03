@@ -19,7 +19,7 @@ public class Structure {
         return myStructureImageView;
     }
 
-    public void setDoor(Pane root) {
+    public void setStructureAsDoor(Pane root) {
         this.getStructureImageView().setFitHeight(DOOR_HEIGHT);
         this.getStructureImageView().setX(GameMain.SCENE_WIDTH / 2 - this.getStructureImageView().getBoundsInLocal().getWidth() / 2);
         root.getChildren().add(this.getStructureImageView());

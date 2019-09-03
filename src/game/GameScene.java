@@ -8,11 +8,13 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class GameScene {
     private final int FIRST_ROW_OFFSET = 50;
+
     private Stage myStage;
     private Scene myScene;
     private Character myMainCharacter;
@@ -20,11 +22,19 @@ public class GameScene {
     private Ball myBall;
     private Pane myRoot;
     private ArrayList<Brick> myBricks = new ArrayList<>();
+    private GameSceneType myGameSceneType;
 
 
-    public GameScene(Stage stage, String bricksConfigPath, String backgroundPath) throws Exception {
+    public GameScene(Stage stage, String backgroundPath, GameSceneType sceneType, Optional<String> bricksConfigPath) throws Exception {
         myStage = stage;
-        myScene = setupScene(bricksConfigPath, backgroundPath);
+
+        if (sceneType == GameSceneType.LEVEL) {
+            myGameSceneType = GameSceneType.LEVEL;
+            myScene = generateLevelScene(bricksConfigPath.get(), backgroundPath);
+        } else {
+            myGameSceneType = sceneType;
+            myScene = generateNonLevelScene(backgroundPath);
+        }
     }
 
     public Scene getScene() {
@@ -39,40 +49,58 @@ public class GameScene {
         return myBall;
     }
 
-    public Pane getRoot() {
-        return myRoot;
-    }
-
-    public ArrayList<Brick> getBricks() {
-        return myBricks;
+    public GameSceneType getGameSceneType() {
+        return myGameSceneType;
     }
 
     public void setNextGameScene(GameScene nextGameScene) {
         myNextGameScene = nextGameScene;
     }
 
-    private Scene setupScene(String bricksConfigPath, String backgroundPath) throws Exception {
+    private Scene generateNonLevelScene(String backgroundPath) {
+        myRoot = new Pane();
+        setBackground(backgroundPath);
+        Scene scene = new Scene(myRoot, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT);
+
+        if (myGameSceneType == GameSceneType.INTRO) {
+            setButtonToAdvance("Start");
+        } else if (myGameSceneType == GameSceneType.HOW_TO_PLAY) {
+            setButtonToAdvance("Begin Game");
+        } else if (myGameSceneType == GameSceneType.LOSE) {
+            setButtonToAdvance("Try Again");
+        } else if (myGameSceneType == GameSceneType.WIN) {
+            setButtonToAdvance("Play Again");
+        }
+        return scene;
+    }
+
+    private Scene generateLevelScene(String bricksConfigPath, String backgroundPath) throws Exception {
         myRoot = new Pane();
         setupBricksConfig(bricksConfigPath);
 
         myMainCharacter = new Character(Character.CharacterEnum.HARRY_POTTER);
         myMainCharacter.setCharacterAsPaddle(myRoot);
 
-        myBall = new Ball();
-        myBall.resetBall(myMainCharacter);
-        myBall.addBallToScreen(myRoot);
-        Structure door = new Structure(Structure.StructureEnum.DOOR);
-        door.setDoor(myRoot);
+        myBall = new Ball(myRoot, myMainCharacter);
 
-        Button button = new Button("Go to next scene"); //TODO: delete this later; only here for easier navigation now
-        button.setOnAction(e -> GameMain.resetStage(myNextGameScene));
-        myRoot.getChildren().add(button);
+        Structure door = new Structure(Structure.StructureEnum.DOOR);
+        door.setStructureAsDoor(myRoot);
+
+        setButtonToAdvance("Go to next level"); //TODO: delete this later; only here for easier navigation now
 
         setBackground(backgroundPath);
 
         Scene scene = new Scene(myRoot, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT);
-        scene.setOnMouseMoved(e -> handleMouseInput(e.getX()));
+        scene.setOnMouseMoved(e -> movePaddleOnMouseInput(e.getX()));
         return scene;
+    }
+
+    private void setButtonToAdvance(String buttonText) {
+        Button button = new Button(buttonText);
+        button.setLayoutX(GameMain.SCENE_WIDTH / 2);
+        button.setLayoutY(GameMain.SCENE_HEIGHT - 100);
+        button.setOnAction(e -> GameMain.resetStage(myNextGameScene));
+        myRoot.getChildren().add(button);
     }
 
     private void setBackground(String backgroundPath) {
@@ -94,9 +122,6 @@ public class GameScene {
             yCoordinateForRow += Brick.BRICK_HEIGHT;
         }
         scanner.close();
-        for (Brick brick : myBricks) {
-            myRoot.getChildren().add(brick.getBrickImageView());
-        }
     }
 
     private void setRow(String rowConfiguration, int yCoordinateForRow) {
@@ -108,18 +133,23 @@ public class GameScene {
                 brick.getBrickImageView().setX(xCoordinateForBrick);
                 brick.getBrickImageView().setY(yCoordinateForRow);
                 myBricks.add(brick);
+                myRoot.getChildren().add(brick.getBrickImageView());
             }
             xCoordinateForBrick += Brick.BRICK_WIDTH;
         }
     }
 
-    public void bounceOffBricks() {
+    public void setBricksHits() {
         Brick brickToDownsize = null;
         for (Brick brick : myBricks) {
             if (myBall.getBallImageView().getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
                 brickToDownsize = brick;
             }
         }
+        downsizeBrick(brickToDownsize);
+    }
+
+    private void downsizeBrick(Brick brickToDownsize) {
         if (brickToDownsize != null) {
             brickToDownsize.decreaseHitsRemaining();
             if (brickToDownsize.getHitsRemaining() == 0) {
@@ -137,10 +167,18 @@ public class GameScene {
         }
     }
 
-    private void handleMouseInput (double x) {
+    private void movePaddleOnMouseInput (double x) {
         myMainCharacter.getCharacterImageView().setX(x);
         if (myMainCharacter.getCharacterImageView().getBoundsInLocal().getMaxX() >= GameMain.SCENE_WIDTH) {
             myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH - myMainCharacter.getCharacterImageView().getFitWidth());
         }
+    }
+
+    public enum GameSceneType {
+        LEVEL,
+        INTRO,
+        HOW_TO_PLAY,
+        LOSE,
+        WIN;
     }
 }

@@ -1,6 +1,5 @@
 package game;
 
-import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -11,7 +10,7 @@ public class Character {
 
     private ImageView myCharacterImageView;
 
-    public Character(CharacterEnum characterName) {
+    public Character( CharacterEnum characterName) {
         Image characterImage = new Image(this.getClass().getClassLoader().getResourceAsStream(characterName.getCharacterFileName()));
         myCharacterImageView = new ImageView(characterImage);
         myCharacterImageView.setFitWidth(CHARACTER_WIDTH);
@@ -40,6 +39,5 @@ public class Character {
             return myAssociatedFileName;
         }
     }
-
 
 }

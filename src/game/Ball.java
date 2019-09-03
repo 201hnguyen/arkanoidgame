@@ -1,26 +1,24 @@
 package game;
 
-import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-
-//TODO: Figure out why my ball is speeding up with each new level
-
 
 public class Ball {
     private static final String BALL_IMAGE = "ball.png";
     private static final int BALL_SIZE = 30;
     private static final int BALL_SPEED = 500;
-    double[] myBallDirection = {1,1};
 
+    private double[] myBallDirection = {1,1};
     private ImageView myBallImageView;
 
-    public Ball() {
+    public Ball(Pane root, Character paddle) {
         Image ballImage =  new Image(this.getClass().getClassLoader().getResourceAsStream(BALL_IMAGE));
         myBallImageView = new ImageView(ballImage);
         myBallImageView.setFitHeight(BALL_SIZE);
         myBallImageView.setFitWidth(BALL_SIZE);
+        resetBall(paddle);
+        root.getChildren().add(myBallImageView);
     }
 
     public ImageView getBallImageView() {
@@ -31,19 +29,15 @@ public class Ball {
         return myBallDirection;
     }
 
-    public void addBallToScreen(Pane root) {
-        root.getChildren().add(myBallImageView);
-    }
-
-    public void resetBall(Character character) {
-        this.getBallImageView().setX(character.getCharacterImageView().getBoundsInParent().getCenterX() - BALL_SIZE / 2);
-        this.getBallImageView().setY(character.getCharacterImageView().getBoundsInParent().getMinY() - BALL_SIZE);
+    public void resetBall(Character paddle) {
+        this.getBallImageView().setX(paddle.getCharacterImageView().getBoundsInParent().getCenterX() - BALL_SIZE / 2);
+        this.getBallImageView().setY(paddle.getCharacterImageView().getBoundsInParent().getMinY() - BALL_SIZE);
         myBallDirection[0] = 1;
         myBallDirection[1] = 1;
     }
 
     public void setBallMotion(double elapsedTime, Character character) {
-        //TODO: get the motion right (go to office hour to ask about math)
+        //TODO: get the motion right (go to office hour to ask about math) (problems: angles and speed increases at every level)
         ImageView ballImageView = this.getBallImageView();
         ballImageView.setX(ballImageView.getX() + myBallDirection[0] * BALL_SPEED * elapsedTime);
         ballImageView.setY(ballImageView.getY() + myBallDirection[1] * BALL_SPEED * elapsedTime);

@@ -6,11 +6,14 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.Optional;
+
 public class GameMain extends Application {
     public static final String LEVEL_ONE_BACKGROUND = "background1.jpg";
     public static final String LEVEL_TWO_BACKGROUND = "background2.jpg";
     public static final String LEVEL_THREE_BACKGROUND = "background3.jpg";
     public static final String INTRO_BACKGROUND = "backgroundintro.jpg";
+    public static final String HOW_TO_PLAY_BACKGROUND = "backgroundhowtoplay.jpg";
     public static final String LOSE_BACKGROUND = "backgroundlose.jpg";
     public static final String WIN_BACKGROUND = "backgroundwin.jpg";
     public static final String LEVEL_ONE_BRICKS_CONFIG_PATH = "resources/level1.txt";
@@ -26,6 +29,10 @@ public class GameMain extends Application {
     private GameScene myGameSceneOne;
     private GameScene myGameSceneTwo;
     private GameScene myGameSceneThree;
+    private GameScene myIntroScene;
+    private GameScene myHowToPlayScene;
+    private GameScene myLoseScene;
+    private GameScene myWinScene;
 
 
 
@@ -36,33 +43,44 @@ public class GameMain extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         myStage = stage;
-        myGameSceneOne = new GameScene(myStage, LEVEL_ONE_BRICKS_CONFIG_PATH, LEVEL_ONE_BACKGROUND);
-        myGameSceneTwo = new GameScene(myStage, LEVEL_TWO_BRICKS_CONFIG_PATH, LEVEL_TWO_BACKGROUND);
-        myGameSceneThree = new GameScene(myStage, LEVEL_THREE_BRICKS_CONFIG_PATH, LEVEL_THREE_BACKGROUND);
 
+        myIntroScene = new GameScene(myStage, INTRO_BACKGROUND, GameScene.GameSceneType.INTRO, Optional.empty());
+        myHowToPlayScene = new GameScene(myStage, HOW_TO_PLAY_BACKGROUND, GameScene.GameSceneType.HOW_TO_PLAY, Optional.empty());
+        myGameSceneOne = new GameScene(myStage, LEVEL_ONE_BACKGROUND, GameScene.GameSceneType.LEVEL, Optional.of(LEVEL_ONE_BRICKS_CONFIG_PATH));
+        myGameSceneTwo = new GameScene(myStage, LEVEL_TWO_BACKGROUND, GameScene.GameSceneType.LEVEL, Optional.of(LEVEL_TWO_BRICKS_CONFIG_PATH));
+        myGameSceneThree = new GameScene(myStage, LEVEL_THREE_BACKGROUND, GameScene.GameSceneType.LEVEL, Optional.of(LEVEL_THREE_BRICKS_CONFIG_PATH));
+        myLoseScene = new GameScene(myStage, LOSE_BACKGROUND, GameScene.GameSceneType.LOSE, Optional.empty());
+        myWinScene = new GameScene(myStage, WIN_BACKGROUND, GameScene.GameSceneType.WIN, Optional.empty());
+
+        myIntroScene.setNextGameScene(myHowToPlayScene);
+        myHowToPlayScene.setNextGameScene(myGameSceneOne);
         myGameSceneOne.setNextGameScene(myGameSceneTwo);
         myGameSceneTwo.setNextGameScene(myGameSceneThree);
-        myGameSceneThree.setNextGameScene(myGameSceneOne);
+        myGameSceneThree.setNextGameScene(myWinScene);
+        myLoseScene.setNextGameScene(myIntroScene);
+        myWinScene.setNextGameScene(myIntroScene);
 
-        resetStage(myGameSceneOne);
+        resetStage(myIntroScene);
     }
 
-    public static void resetStage(GameScene gameSceneGameScene) {
-        myStage.setScene(gameSceneGameScene.getScene());
+    public static void resetStage(GameScene gameScene) {
+        myStage.setScene(gameScene.getScene());
         myStage.setTitle("TODO: Change title");
         myStage.setResizable(false);
         myStage.show();
 
-        var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> stepThroughLevel(gameSceneGameScene, SECOND_DELAY));
-        var animation = new Timeline();
-        animation.setCycleCount(Timeline.INDEFINITE);
-        animation.getKeyFrames().add(frame);
-        animation.play();
+        if (gameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL) {
+            var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> stepThroughLevel(gameScene, SECOND_DELAY));
+            var animation = new Timeline();
+            animation.setCycleCount(Timeline.INDEFINITE);
+            animation.getKeyFrames().add(frame);
+            animation.play();
+        }
     }
 
     private static void stepThroughLevel(GameScene gameScene, double elapsedTime) {
         gameScene.getBall().setBallMotion(elapsedTime, gameScene.getMainCharacter());
-        gameScene.bounceOffBricks();
+        gameScene.setBricksHits();
     }
 
 }

@@ -16,16 +16,16 @@ public class Brick {
         myBrickId = hitsId;
         myHitsRemaining = hitsId;
         if (myBrickId == 1) {
-            myBrickImageView = createBrick(BrickColor.BRICK1);
+            myBrickImageView = createBrick(BrickType.BRICK1);
         } else if (myBrickId == 2) {
-            myBrickImageView = createBrick(BrickColor.BRICK2);
+            myBrickImageView = createBrick(BrickType.BRICK2);
         } else if (myBrickId == 3) {
-            myBrickImageView = createBrick(BrickColor.BRICK3);
+            myBrickImageView = createBrick(BrickType.BRICK3);
         }
     }
 
-    private ImageView createBrick(BrickColor color) {
-        Image brickImage = new Image(this.getClass().getClassLoader().getResourceAsStream(color.getBrickFileName()));
+    private ImageView createBrick(BrickType type) {
+        Image brickImage = new Image(this.getClass().getClassLoader().getResourceAsStream(type.getBrickFileName()));
         ImageView brick = new ImageView(brickImage);
         brick.setFitWidth(BRICK_WIDTH);
         brick.setFitHeight(BRICK_HEIGHT);
@@ -44,17 +44,17 @@ public class Brick {
         return myBrickImageView;
     }
 
-    public enum BrickColor {
+    private enum BrickType {
         BRICK1 ("brick1.png"),
         BRICK2 ("brick2.png"),
         BRICK3 ("brick3.png");
 
         private String myAssociatedFileName;
-        BrickColor(String fileName) {
+        BrickType(String fileName) {
             myAssociatedFileName = fileName;
         }
 
-        public String getBrickFileName() {
+        private String getBrickFileName() {
             return myAssociatedFileName;
         }
     }
