@@ -5,8 +5,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 public class Character {
-    public static final int CHARACTER_HEIGHT = 150;
-    public static final int CHARACTER_WIDTH = 200;
+    private static final int CHARACTER_HEIGHT = 150;
+    private static final int CHARACTER_WIDTH = 200;
 
     private ImageView myCharacterImageView;
 

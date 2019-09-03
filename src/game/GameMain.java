@@ -35,7 +35,13 @@ public class GameMain extends Application {
         if (gameSceneType == GameSceneType.LEVEL1 ||
                 gameSceneType == GameSceneType.LEVEL2 ||
                 gameSceneType == GameSceneType.LEVEL3) {
-            var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> stepThroughLevel(gameScene, SECOND_DELAY));
+            var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> {
+                try {
+                    stepThroughLevel(gameScene, SECOND_DELAY);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
             var animation = new Timeline();
             animation.setCycleCount(Timeline.INDEFINITE);
             animation.getKeyFrames().add(frame);
@@ -43,7 +49,7 @@ public class GameMain extends Application {
         }
     }
 
-    private static void stepThroughLevel(GameScene gameScene, double elapsedTime) {
+    private static void stepThroughLevel(GameScene gameScene, double elapsedTime) throws Exception {
         gameScene.setBallMotion(elapsedTime);
         gameScene.setBricksHits();
     }

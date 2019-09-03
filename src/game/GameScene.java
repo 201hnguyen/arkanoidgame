@@ -14,16 +14,16 @@ import java.util.stream.Stream;
 
 public class GameScene {
     private static final String BALL_IMAGE = "ball.png";
-    public static final String LEVEL_ONE_BACKGROUND = "background1.jpg";
-    public static final String LEVEL_TWO_BACKGROUND = "background2.jpg";
-    public static final String LEVEL_THREE_BACKGROUND = "background3.jpg";
-    public static final String INTRO_BACKGROUND = "backgroundintro.jpg";
-    public static final String HOW_TO_PLAY_BACKGROUND = "backgroundhowtoplay.jpg";
-    public static final String LOSE_BACKGROUND = "backgroundlose.jpg";
-    public static final String WIN_BACKGROUND = "backgroundwin.jpg";
-    public static final String LEVEL_ONE_BRICKS_CONFIG_PATH = "resources/level1.txt";
-    public static final String LEVEL_TWO_BRICKS_CONFIG_PATH = "resources/level2.txt";
-    public static final String LEVEL_THREE_BRICKS_CONFIG_PATH = "resources/level3.txt";
+    private static final String LEVEL_ONE_BACKGROUND = "background1.jpg";
+    private static final String LEVEL_TWO_BACKGROUND = "background2.jpg";
+    private static final String LEVEL_THREE_BACKGROUND = "background3.jpg";
+    private static final String INTRO_BACKGROUND = "backgroundintro.jpg";
+    private static final String HOW_TO_PLAY_BACKGROUND = "backgroundhowtoplay.jpg";
+    private static final String LOSE_BACKGROUND = "backgroundlose.jpg";
+    private static final String WIN_BACKGROUND = "backgroundwin.jpg";
+    private static final String LEVEL_ONE_BRICKS_CONFIG_PATH = "resources/level1.txt";
+    private static final String LEVEL_TWO_BRICKS_CONFIG_PATH = "resources/level2.txt";
+    private static final String LEVEL_THREE_BRICKS_CONFIG_PATH = "resources/level3.txt";
     private static final int BALL_SIZE = 30;
     private static final int BALL_SPEED = 500;
     private final int FIRST_ROW_OFFSET = 50;
@@ -38,7 +38,7 @@ public class GameScene {
     private Pane myRoot;
     private ArrayList<Brick> myBricks = new ArrayList<>();
     private GameSceneType myGameSceneType;
-    private int[] myBallDirection = {1,1};
+    private int[] myBallDirection = {1,-1};
 
 
 
@@ -49,12 +49,10 @@ public class GameScene {
         if (myGameSceneType == GameSceneType.LEVEL1) {
             myScene = generateLevelScene(LEVEL_ONE_BRICKS_CONFIG_PATH, LEVEL_ONE_BACKGROUND);
             setNextGameSceneType(GameSceneType.LEVEL2);
-        }
-        else if (myGameSceneType == GameSceneType.LEVEL2) {
+        } else if (myGameSceneType == GameSceneType.LEVEL2) {
             myScene = generateLevelScene(LEVEL_TWO_BRICKS_CONFIG_PATH, LEVEL_TWO_BACKGROUND);
             setNextGameSceneType(GameSceneType.LEVEL3);
-        }
-        else if (myGameSceneType == GameSceneType.LEVEL3) {
+        } else if (myGameSceneType == GameSceneType.LEVEL3) {
             myScene = generateLevelScene(LEVEL_THREE_BRICKS_CONFIG_PATH, LEVEL_THREE_BACKGROUND);
             setNextGameSceneType(GameSceneType.WIN);
         } else if (myGameSceneType == GameSceneType.INTRO) {
@@ -76,20 +74,8 @@ public class GameScene {
         return myScene;
     }
 
-    public Character getMainCharacter() {
-        return myMainCharacter;
-    }
-
-    public ImageView getBall() {
-        return myBall;
-    }
-
     public void setNextGameSceneType(GameSceneType nextGameSceneType) {
         myNextGameSceneType = nextGameSceneType;
-    }
-
-    public int getLives() {
-        return myLives;
     }
 
     private Scene generateNonLevelScene(String backgroundPath) {
@@ -134,7 +120,7 @@ public class GameScene {
 
     private void setButtonToAdvance(String buttonText) {
         Button button = new Button(buttonText);
-        button.setLayoutX(GameMain.SCENE_WIDTH / 2);
+        button.setLayoutX(GameMain.SCENE_WIDTH / 2 - button.getWidth()/2);
         button.setLayoutY(GameMain.SCENE_HEIGHT - 100);
         button.setOnAction(e -> {
             try {
@@ -222,40 +208,45 @@ public class GameScene {
         myBall = new ImageView(ballImage);
         myBall.setFitHeight(BALL_SIZE);
         myBall.setFitWidth(BALL_SIZE);
+        myBall.setX(myMainCharacter.getCharacterImageView().getBoundsInParent().getCenterX() - BALL_SIZE / 2);
+        myBall.setY(myMainCharacter.getCharacterImageView().getBoundsInParent().getMinY() - BALL_SIZE);
         myRoot.getChildren().add(myBall);
-        resetBall();
     }
 
     private void resetBall() {
         myBall.setX(myMainCharacter.getCharacterImageView().getBoundsInParent().getCenterX() - BALL_SIZE / 2);
         myBall.setY(myMainCharacter.getCharacterImageView().getBoundsInParent().getMinY() - BALL_SIZE);
         myBallDirection[0] = 1;
-        myBallDirection[1] = 1;
+        myBallDirection[1] = -1;
     }
 
-    public void setBallMotion(double elapsedTime) {
-        ImageView ballImageView = this.getBall();
-        ballImageView.setX(ballImageView.getX() + myBallDirection[0] * BALL_SPEED * elapsedTime);
-        ballImageView.setY(ballImageView.getY() + myBallDirection[1] * BALL_SPEED * elapsedTime);
-
-        wallCollisionCheck(ballImageView);
-        paddleCollisionCheck(ballImageView);
+    public void setBallMotion(double elapsedTime) throws Exception {
+        myBall.setX(myBall.getX() + myBallDirection[0] * BALL_SPEED * elapsedTime);
+        myBall.setY(myBall.getY() + myBallDirection[1] * BALL_SPEED * elapsedTime);
+        wallCollisionCheck();
+        paddleCollisionCheck();
     }
 
-    private void wallCollisionCheck(ImageView ballImageView) {
-        if (ballImageView.getX() <= 0 || ballImageView.getX() >= GameMain.SCENE_WIDTH - ballImageView.getBoundsInLocal().getWidth()) {
+    private void wallCollisionCheck() throws Exception {
+        if (myBall.getX() <= 0 || myBall.getX() >= GameMain.SCENE_WIDTH - myBall.getBoundsInLocal().getWidth()) {
             myBallDirection[0] *= -1;
         }
-        if (ballImageView.getY() <= 0) {
+        if (myBall.getY() <= 0) {
             myBallDirection[1] *= -1;
-        } else if (ballImageView.getY() >= (GameMain.SCENE_HEIGHT - ballImageView.getBoundsInLocal().getHeight())) {
-            resetBall();
+        } else if (myBall.getY() >= (GameMain.SCENE_HEIGHT - myBall.getBoundsInLocal().getHeight())) {
+            myLives--;
+            if (myLives == 0) {
+                GameMain.resetStage(GameSceneType.LOSE);
+            } else {
+                resetBall();
+                myBallDirection[1] *= -1;
+            }
         }
     }
 
-    private void paddleCollisionCheck(ImageView ballImageView) {
-        if (ballImageView.getBoundsInParent().intersects(myMainCharacter.getCharacterImageView().getBoundsInParent()) &&
-                ballImageView.getBoundsInParent().getMaxY() <= myMainCharacter.getCharacterImageView().getBoundsInParent().getMinY()) {
+    private void paddleCollisionCheck() {
+        if (myBall.getBoundsInParent().intersects(myMainCharacter.getCharacterImageView().getBoundsInParent()) &&
+                myBall.getBoundsInParent().getMaxY() <= myMainCharacter.getCharacterImageView().getBoundsInParent().getMinY()) {
             myBallDirection[1] *= -1;
         }
     }

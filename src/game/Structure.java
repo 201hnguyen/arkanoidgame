@@ -6,7 +6,7 @@ import javafx.scene.layout.Pane;
 
 public class Structure {
 
-    public static final int DOOR_HEIGHT = Brick.BRICK_HEIGHT - 5;
+    public static final int DOOR_HEIGHT = Brick.BRICK_HEIGHT;
 
     private ImageView myStructureImageView;
 
