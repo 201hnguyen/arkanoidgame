@@ -3,37 +3,72 @@ package game;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class GameScene {
+    private static final String BALL_IMAGE = "ball.png";
+    public static final String LEVEL_ONE_BACKGROUND = "background1.jpg";
+    public static final String LEVEL_TWO_BACKGROUND = "background2.jpg";
+    public static final String LEVEL_THREE_BACKGROUND = "background3.jpg";
+    public static final String INTRO_BACKGROUND = "backgroundintro.jpg";
+    public static final String HOW_TO_PLAY_BACKGROUND = "backgroundhowtoplay.jpg";
+    public static final String LOSE_BACKGROUND = "backgroundlose.jpg";
+    public static final String WIN_BACKGROUND = "backgroundwin.jpg";
+    public static final String LEVEL_ONE_BRICKS_CONFIG_PATH = "resources/level1.txt";
+    public static final String LEVEL_TWO_BRICKS_CONFIG_PATH = "resources/level2.txt";
+    public static final String LEVEL_THREE_BRICKS_CONFIG_PATH = "resources/level3.txt";
+    private static final int BALL_SIZE = 30;
+    private static final int BALL_SPEED = 500;
     private final int FIRST_ROW_OFFSET = 50;
 
+
+    private int myLives;
     private Stage myStage;
     private Scene myScene;
     private Character myMainCharacter;
-    private GameScene myNextGameScene;
-    private Ball myBall;
+    private GameSceneType myNextGameSceneType;
+    private ImageView myBall;
     private Pane myRoot;
     private ArrayList<Brick> myBricks = new ArrayList<>();
     private GameSceneType myGameSceneType;
+    private int[] myBallDirection = {1,1};
 
 
-    public GameScene(Stage stage, String backgroundPath, GameSceneType sceneType, Optional<String> bricksConfigPath) throws Exception {
+
+    public GameScene(Stage stage, GameSceneType sceneType) throws Exception {
         myStage = stage;
+        myGameSceneType = sceneType;
 
-        if (sceneType == GameSceneType.LEVEL) {
-            myGameSceneType = GameSceneType.LEVEL;
-            myScene = generateLevelScene(bricksConfigPath.get(), backgroundPath);
-        } else {
-            myGameSceneType = sceneType;
-            myScene = generateNonLevelScene(backgroundPath);
+        if (myGameSceneType == GameSceneType.LEVEL1) {
+            myScene = generateLevelScene(LEVEL_ONE_BRICKS_CONFIG_PATH, LEVEL_ONE_BACKGROUND);
+            setNextGameSceneType(GameSceneType.LEVEL2);
+        }
+        else if (myGameSceneType == GameSceneType.LEVEL2) {
+            myScene = generateLevelScene(LEVEL_TWO_BRICKS_CONFIG_PATH, LEVEL_TWO_BACKGROUND);
+            setNextGameSceneType(GameSceneType.LEVEL3);
+        }
+        else if (myGameSceneType == GameSceneType.LEVEL3) {
+            myScene = generateLevelScene(LEVEL_THREE_BRICKS_CONFIG_PATH, LEVEL_THREE_BACKGROUND);
+            setNextGameSceneType(GameSceneType.WIN);
+        } else if (myGameSceneType == GameSceneType.INTRO) {
+            myScene = generateNonLevelScene(INTRO_BACKGROUND);
+            setNextGameSceneType(GameSceneType.HOW_TO_PLAY);
+        } else if (myGameSceneType == GameSceneType.HOW_TO_PLAY) {
+            myScene = generateNonLevelScene(HOW_TO_PLAY_BACKGROUND);
+            setNextGameSceneType(GameSceneType.LEVEL1);
+        } else if (myGameSceneType == GameSceneType.WIN) {
+            myScene = generateNonLevelScene(WIN_BACKGROUND);
+            setNextGameSceneType(GameSceneType.INTRO);
+        } else if (myGameSceneType == GameSceneType.LOSE) {
+            myScene = generateNonLevelScene(LOSE_BACKGROUND);
+            setNextGameSceneType(GameSceneType.INTRO);
         }
     }
 
@@ -45,16 +80,16 @@ public class GameScene {
         return myMainCharacter;
     }
 
-    public Ball getBall() {
+    public ImageView getBall() {
         return myBall;
     }
 
-    public GameSceneType getGameSceneType() {
-        return myGameSceneType;
+    public void setNextGameSceneType(GameSceneType nextGameSceneType) {
+        myNextGameSceneType = nextGameSceneType;
     }
 
-    public void setNextGameScene(GameScene nextGameScene) {
-        myNextGameScene = nextGameScene;
+    public int getLives() {
+        return myLives;
     }
 
     private Scene generateNonLevelScene(String backgroundPath) {
@@ -81,10 +116,12 @@ public class GameScene {
         myMainCharacter = new Character(Character.CharacterEnum.HARRY_POTTER);
         myMainCharacter.setCharacterAsPaddle(myRoot);
 
-        myBall = new Ball(myRoot, myMainCharacter);
+        createAndSetBall();
 
         Structure door = new Structure(Structure.StructureEnum.DOOR);
         door.setStructureAsDoor(myRoot);
+
+        myLives = 3;
 
         setButtonToAdvance("Go to next level"); //TODO: delete this later; only here for easier navigation now
 
@@ -99,7 +136,13 @@ public class GameScene {
         Button button = new Button(buttonText);
         button.setLayoutX(GameMain.SCENE_WIDTH / 2);
         button.setLayoutY(GameMain.SCENE_HEIGHT - 100);
-        button.setOnAction(e -> GameMain.resetStage(myNextGameScene));
+        button.setOnAction(e -> {
+            try {
+                GameMain.resetStage(myNextGameSceneType);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
         myRoot.getChildren().add(button);
     }
 
@@ -142,7 +185,7 @@ public class GameScene {
     public void setBricksHits() {
         Brick brickToDownsize = null;
         for (Brick brick : myBricks) {
-            if (myBall.getBallImageView().getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
+            if (myBall.getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
                 brickToDownsize = brick;
             }
         }
@@ -156,13 +199,13 @@ public class GameScene {
                 myRoot.getChildren().remove(brickToDownsize.getBrickImageView());
                 myBricks.remove(brickToDownsize);
             }
-            if (myBall.getBallImageView().getBoundsInParent().getMaxY() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinY()
-                    || myBall.getBallImageView().getBoundsInParent().getMinY() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxY()) {
-                myBall.getBallDirection()[1] *= -1;
+            if (myBall.getBoundsInParent().getMaxY() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinY()
+                    || myBall.getBoundsInParent().getMinY() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxY()) {
+                myBallDirection[1] *= -1;
             }
-            if (myBall.getBallImageView().getBoundsInParent().getMaxX() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinX()
-                    || myBall.getBallImageView().getBoundsInParent().getMinX() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxX()) {
-                myBall.getBallDirection()[0] *= -1;
+            if (myBall.getBoundsInParent().getMaxX() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinX()
+                    || myBall.getBoundsInParent().getMinX() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxX()) {
+                myBallDirection[0] *= -1;
             }
         }
     }
@@ -174,11 +217,47 @@ public class GameScene {
         }
     }
 
-    public enum GameSceneType {
-        LEVEL,
-        INTRO,
-        HOW_TO_PLAY,
-        LOSE,
-        WIN;
+    private void createAndSetBall() {
+        Image ballImage =  new Image(this.getClass().getClassLoader().getResourceAsStream(BALL_IMAGE));
+        myBall = new ImageView(ballImage);
+        myBall.setFitHeight(BALL_SIZE);
+        myBall.setFitWidth(BALL_SIZE);
+        myRoot.getChildren().add(myBall);
+        resetBall();
+    }
+
+    private void resetBall() {
+        myBall.setX(myMainCharacter.getCharacterImageView().getBoundsInParent().getCenterX() - BALL_SIZE / 2);
+        myBall.setY(myMainCharacter.getCharacterImageView().getBoundsInParent().getMinY() - BALL_SIZE);
+        myBallDirection[0] = 1;
+        myBallDirection[1] = 1;
+    }
+
+    public void setBallMotion(double elapsedTime) {
+        ImageView ballImageView = this.getBall();
+        ballImageView.setX(ballImageView.getX() + myBallDirection[0] * BALL_SPEED * elapsedTime);
+        ballImageView.setY(ballImageView.getY() + myBallDirection[1] * BALL_SPEED * elapsedTime);
+
+        wallCollisionCheck(ballImageView);
+        paddleCollisionCheck(ballImageView);
+    }
+
+    private void wallCollisionCheck(ImageView ballImageView) {
+        if (ballImageView.getX() <= 0 || ballImageView.getX() >= GameMain.SCENE_WIDTH - ballImageView.getBoundsInLocal().getWidth()) {
+            myBallDirection[0] *= -1;
+        }
+        if (ballImageView.getY() <= 0) {
+            myBallDirection[1] *= -1;
+        } else if (ballImageView.getY() >= (GameMain.SCENE_HEIGHT - ballImageView.getBoundsInLocal().getHeight())) {
+            resetBall();
+        }
+    }
+
+    private void paddleCollisionCheck(ImageView ballImageView) {
+        if (ballImageView.getBoundsInParent().intersects(myMainCharacter.getCharacterImageView().getBoundsInParent()) &&
+                ballImageView.getBoundsInParent().getMaxY() <= myMainCharacter.getCharacterImageView().getBoundsInParent().getMinY()) {
+            myBallDirection[1] *= -1;
+        }
     }
 }
+
