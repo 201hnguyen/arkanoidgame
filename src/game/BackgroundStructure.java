@@ -4,13 +4,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-public class Structure {
+public class BackgroundStructure {
 
     public static final int DOOR_HEIGHT = Brick.BRICK_HEIGHT;
 
     private ImageView myStructureImageView;
 
-    public Structure(StructureEnum structure) {
+    public BackgroundStructure(StructureEnum structure) {
         Image structureImage = new Image(this.getClass().getClassLoader().getResourceAsStream(structure.getStructureFileName()));
         myStructureImageView = new ImageView(structureImage);
     }

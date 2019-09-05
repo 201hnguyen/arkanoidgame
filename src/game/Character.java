@@ -7,6 +7,7 @@ import javafx.scene.layout.Pane;
 public class Character {
     public static final int CHARACTER_HEIGHT = 150;
     public static final int CHARACTER_WIDTH = 200;
+    public static final int THIRD_DIVISION = 50;
 
     private ImageView myCharacterImageView;
 

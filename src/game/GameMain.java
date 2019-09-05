@@ -26,7 +26,7 @@ public class GameMain extends Application {
     }
 
     public static void resetStage(GameSceneType gameSceneType) throws Exception {
-        GameScene gameScene = new GameScene(myStage, gameSceneType);
+        GameScene gameScene = new GameScene(gameSceneType);
         myStage.setScene(gameScene.getScene());
         myStage.setTitle("Breakout Harry Potter Adventure");
         myStage.setResizable(false);
@@ -50,11 +50,11 @@ public class GameMain extends Application {
     }
 
     private static void stepThroughLevel(GameScene gameScene, double elapsedTime) throws Exception {
-        if (gameScene.getBricksRemaining() == 0) {
+        if (gameScene.getBrickStructure().getBricksRemaining() == 0) {
             gameScene.clearLevel(elapsedTime);
         } else {
             gameScene.setBallMotion(elapsedTime);
-            gameScene.reconfigureBricksBasedOnHits();
+            gameScene.getBrickStructure().reconfigureBricksBasedOnHits(gameScene.getBall(), gameScene.getBallDirection());
         }
     }
 }
