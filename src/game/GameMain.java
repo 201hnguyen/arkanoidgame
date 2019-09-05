@@ -50,7 +50,11 @@ public class GameMain extends Application {
     }
 
     private static void stepThroughLevel(GameScene gameScene, double elapsedTime) throws Exception {
-        gameScene.setBallMotion(elapsedTime);
-        gameScene.setBricksHits();
+        if (gameScene.getBricksRemaining() == 0) {
+            gameScene.clearLevel(elapsedTime);
+        } else {
+            gameScene.setBallMotion(elapsedTime);
+            gameScene.reconfigureBricksBasedOnHits();
+        }
     }
 }

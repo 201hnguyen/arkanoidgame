@@ -44,7 +44,7 @@ public class Brick {
         return myBrickImageView;
     }
 
-    private enum BrickType {
+    public enum BrickType {
         BRICK1 ("brick1.png"),
         BRICK2 ("brick2.png"),
         BRICK3 ("brick3.png");
