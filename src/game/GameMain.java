@@ -31,30 +31,29 @@ public class GameMain extends Application {
         myStage.setTitle("Breakout Harry Potter Adventure");
         myStage.setResizable(false);
         myStage.show();
+        System.out.println("stage reset completed" + gameSceneType.toString());
 
-        if (gameSceneType == GameSceneType.LEVEL1 ||
-                gameSceneType == GameSceneType.LEVEL2 ||
-                gameSceneType == GameSceneType.LEVEL3) {
-            var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> {
+        var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> {
+            if (gameSceneType == GameSceneType.LEVEL1 || gameSceneType == GameSceneType.LEVEL2 || gameSceneType == GameSceneType.LEVEL3) {
                 try {
                     stepThroughLevel(gameScene, SECOND_DELAY);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            });
-            var animation = new Timeline();
-            animation.setCycleCount(Timeline.INDEFINITE);
-            animation.getKeyFrames().add(frame);
-            animation.play();
-        }
+            }
+        });
+        var animation = new Timeline();
+        animation.setCycleCount(Timeline.INDEFINITE);
+        animation.getKeyFrames().add(frame);
+        animation.play();
     }
 
     private static void stepThroughLevel(GameScene gameScene, double elapsedTime) throws Exception {
         if (gameScene.getBrickStructure().getBricksRemaining() == 0) {
             gameScene.clearLevel(elapsedTime);
         } else {
-            gameScene.setBallMotion(elapsedTime);
-            gameScene.getBrickStructure().reconfigureBricksBasedOnHits(gameScene.getBall(), gameScene.getBallDirection());
+            gameScene.getBall().setBallMotion(elapsedTime, gameScene);
+            gameScene.getBrickStructure().reconfigureBricksBasedOnHits(gameScene.getBall());
         }
     }
 }

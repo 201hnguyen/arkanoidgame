@@ -1,6 +1,5 @@
 package game;
 
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.io.File;
@@ -17,10 +16,6 @@ public class BrickStructure {
     public BrickStructure(String bricksConfigurationPath, Pane root) throws Exception {
         myRoot = root;
         setupBricksConfig(bricksConfigurationPath);
-    }
-
-    public int getBricksRemaining() {
-        return myBricks.size();
     }
 
     private void setupBricksConfig(String path) throws Exception {
@@ -51,40 +46,46 @@ public class BrickStructure {
         }
     }
 
-    public void  reconfigureBricksBasedOnHits(ImageView ball, int[] ballDirection) {
+    public void  reconfigureBricksBasedOnHits(Ball ball) {
         Brick brickToDownsize = null;
         for (Brick brick : myBricks) {
-            if (ball.getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
+            if (ball.getBallImageView().getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
                 brickToDownsize = brick;
             }
         }
-        reflectBallAndDownsizeBrick(brickToDownsize, ball, ballDirection);
-    }
-
-    private void reflectBallAndDownsizeBrick(Brick brickToDownsize, ImageView ball, int[] ballDirection) {
         if (brickToDownsize != null) {
-            boolean ballComesFromTop = ball.getBoundsInParent().getCenterY() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinY();
-            boolean ballComesFromBottom = ball.getBoundsInParent().getCenterY() >= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxY();
-            boolean ballComesFromLeft = ball.getBoundsInParent().getCenterX() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinX();
-            boolean ballComesFromRight = ball.getBoundsInParent().getCenterX() >= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxX();
-
-            if (ballComesFromTop && ballComesFromLeft || ballComesFromTop && ballComesFromRight ||
-                    ballComesFromBottom && ballComesFromLeft || ballComesFromBottom && ballComesFromRight) {
-                ballDirection[0] *= -1;
-                ballDirection[1] *= -1;
-            } else if (ballComesFromBottom || ballComesFromTop) {
-                ballDirection[1] *= -1;
-            } else if (ballComesFromLeft || ballComesFromRight) {
-                ballDirection[0] *= -1;
-            }
-
-            brickToDownsize.decreaseHitsRemaining();
-            if (brickToDownsize.getHitsRemaining() == 0) {
-                myRoot.getChildren().remove(brickToDownsize.getBrickImageView());
-                myBricks.remove(brickToDownsize);
-            }
+            reflectBall(brickToDownsize, ball);
+            downsizeBrick(brickToDownsize);
         }
     }
 
+    private void reflectBall(Brick brickToDownsize, Ball ball) {
+        boolean ballComesFromTop = ball.getBallImageView().getBoundsInParent().getCenterY() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinY();
+        boolean ballComesFromBottom = ball.getBallImageView().getBoundsInParent().getCenterY() >= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxY();
+        boolean ballComesFromLeft = ball.getBallImageView().getBoundsInParent().getCenterX() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinX();
+        boolean ballComesFromRight = ball.getBallImageView().getBoundsInParent().getCenterX() >= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxX();
+
+        if (ballComesFromTop && ballComesFromLeft || ballComesFromTop && ballComesFromRight ||
+                ballComesFromBottom && ballComesFromLeft || ballComesFromBottom && ballComesFromRight) {
+            ball.setXDirection(ball.getXDirection() * -1);
+            ball.setYDirection(ball.getYDirection() * -1);
+        } else if (ballComesFromBottom || ballComesFromTop) {
+            ball.setYDirection(ball.getYDirection() * -1);
+        } else if (ballComesFromLeft || ballComesFromRight) {
+            ball.setXDirection(ball.getXDirection() * -1);
+        }
+    }
+
+    private void downsizeBrick(Brick brickToDownsize) {
+        brickToDownsize.decreaseHitsRemaining();
+        if (brickToDownsize.getHitsRemaining() == 0) {
+            myRoot.getChildren().remove(brickToDownsize.getBrickImageView());
+            myBricks.remove(brickToDownsize);
+        }
+    }
+
+    public int getBricksRemaining() {
+        return myBricks.size();
+    }
 
 }

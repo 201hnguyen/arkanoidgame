@@ -11,7 +11,7 @@ public class Character {
 
     private ImageView myCharacterImageView;
 
-    public Character( CharacterEnum characterName) {
+    public Character(CharacterEnum characterName) {
         Image characterImage = new Image(this.getClass().getClassLoader().getResourceAsStream(characterName.getCharacterFileName()));
         myCharacterImageView = new ImageView(characterImage);
         myCharacterImageView.setFitWidth(CHARACTER_WIDTH);

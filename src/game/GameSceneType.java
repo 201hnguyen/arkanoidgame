@@ -8,9 +8,7 @@ public enum GameSceneType {
     LOSE ("backgroundlose.jpg"),
     WIN ("backgroundwin.jpg");
 
-
     private String myBackground;
-
 
     GameSceneType(String background) {
         myBackground = background;
