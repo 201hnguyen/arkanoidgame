@@ -3,6 +3,8 @@ package game;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 
 import java.util.ArrayList;
@@ -37,6 +39,28 @@ public class GameScene {
             myScene = generateNonLevelScene(GameSceneType.INTRO);
         } else if (myGameSceneType == GameSceneType.LOSE) {
             myScene = generateNonLevelScene(GameSceneType.INTRO);
+        }
+
+        myScene.setOnKeyPressed(e -> {
+            try {
+                handleKeyInput(e);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+
+    private void handleKeyInput(KeyEvent e) throws Exception {
+        if (e.getCode() == KeyCode.DIGIT1) {
+            GameMain.resetStage(GameSceneType.LEVEL1);
+        } else if (e.getCode() == KeyCode.DIGIT2) {
+            GameMain.resetStage(GameSceneType.LEVEL2);
+        } else if (e.getCode().isDigitKey()) {
+            GameMain.resetStage(GameSceneType.LEVEL3);
+        } else if (e.getCode() == KeyCode.I) {
+            GameMain.resetStage(GameSceneType.INTRO);
+        } else if (e.getCode() == KeyCode.W) {
+            GameMain.resetStage(GameSceneType.WIN);
         }
     }
 
