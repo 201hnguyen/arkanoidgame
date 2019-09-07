@@ -2,6 +2,7 @@ package game;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -68,7 +69,9 @@ public class GameScene {
         } else if (e.getCode() == KeyCode.D) {
             myMainCharacter.changeCharacter(myMainCharacter.getDumbledoresArmyImageView(), myRoot);
         } else if (e.getCode() == KeyCode.B) {
-
+            myRoot.setEffect(new GaussianBlur(100));
+        } else if (e.getCode() == KeyCode.V) {
+            myRoot.setEffect(new GaussianBlur(0));
         } else if (e.getCode() == KeyCode.C) {
 
         } else if (e.getCode() == KeyCode.S) {
