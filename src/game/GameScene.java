@@ -5,6 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 
+import java.util.ArrayList;
+
 public class GameScene {
     public static final String LEVEL_ONE_BRICKS_CONFIG_PATH = "resources/level1.txt";
     public static final String LEVEL_TWO_BRICKS_CONFIG_PATH = "resources/level2.txt";
@@ -18,6 +20,7 @@ public class GameScene {
     private Character myMainCharacter;
     private BrickStructure myBrickStructure;
     private GameStatus myGameStatus;
+    private ArrayList<Powerup> myPresentPowerups = new ArrayList<>();
 
     public GameScene(GameSceneType sceneType) throws Exception {
         myGameSceneType = sceneType;
@@ -112,7 +115,7 @@ public class GameScene {
     }
 
     public void loseLevel() throws Exception {
-            System.out.println("Before stage reset");
+//            System.out.println("Before stage reset");
             GameMain.resetStage(GameSceneType.LOSE);
     }
 
@@ -138,6 +141,17 @@ public class GameScene {
 
     public GameStatus getGameStatus() {
         return myGameStatus;
+    }
+
+    public void setPowerup(Brick brickWithPowerup) {
+        brickWithPowerup.getPowerup().revealPowerup(brickWithPowerup, myRoot);
+        myPresentPowerups.add(brickWithPowerup.getPowerup());
+        brickWithPowerup.getPowerup().setPowerBrickCoordinate(brickWithPowerup.getBrickImageView().getBoundsInParent().getCenterX(),
+                brickWithPowerup.getBrickImageView().getBoundsInParent().getMinY());
+    }
+
+    public ArrayList<Powerup> getPresentPowerups() {
+        return myPresentPowerups;
     }
 
     public GameSceneType getGameSceneType() {

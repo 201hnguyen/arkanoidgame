@@ -53,7 +53,10 @@ public class GameMain extends Application {
             gameScene.clearLevel(elapsedTime);
         } else {
             gameScene.getBall().setBallMotion(elapsedTime, gameScene);
-            gameScene.getBrickStructure().reconfigureBricksBasedOnHits(gameScene.getBall());
+            gameScene.getBrickStructure().reconfigureBricksBasedOnHits(gameScene);
+            for (Powerup powerup : gameScene.getPresentPowerups()) {
+                powerup.setPowerupMotion(elapsedTime, gameScene);
+            }
         }
     }
 }

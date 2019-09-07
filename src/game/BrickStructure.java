@@ -46,16 +46,19 @@ public class BrickStructure {
         }
     }
 
-    public void  reconfigureBricksBasedOnHits(Ball ball) {
+    public void reconfigureBricksBasedOnHits(GameScene gameScene) {
         Brick brickToDownsize = null;
+        double[] brickToDownsizeCoordinates = {0,0};
         for (Brick brick : myBricks) {
-            if (ball.getBallImageView().getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
+            if (gameScene.getBall().getBallImageView().getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
                 brickToDownsize = brick;
             }
         }
         if (brickToDownsize != null) {
-            reflectBall(brickToDownsize, ball);
-            downsizeBrick(brickToDownsize);
+            brickToDownsizeCoordinates[0] = brickToDownsize.getBrickImageView().getBoundsInParent().getCenterX();
+            brickToDownsizeCoordinates[1] = brickToDownsize.getBrickImageView().getBoundsInParent().getCenterY();
+            reflectBall(brickToDownsize, gameScene.getBall());
+            downsizeBrick(brickToDownsize, gameScene);
         }
     }
 
@@ -76,16 +79,28 @@ public class BrickStructure {
         }
     }
 
-    private void downsizeBrick(Brick brickToDownsize) {
+    private void downsizeBrick(Brick brickToDownsize, GameScene gameScene) {
         brickToDownsize.decreaseHitsRemaining();
         if (brickToDownsize.getHitsRemaining() == 0) {
-            myRoot.getChildren().remove(brickToDownsize.getBrickImageView());
+            gameScene.getRoot().getChildren().remove(brickToDownsize.getBrickImageView());
             myBricks.remove(brickToDownsize);
+
+            if (brickToDownsize.getBrickId() == 4 || brickToDownsize.getBrickId() == 5 || brickToDownsize.getBrickId() == 6) {
+                gameScene.setPowerup(brickToDownsize);
+            }
         }
     }
 
     public int getBricksRemaining() {
         return myBricks.size();
+    }
+
+    public ArrayList<Brick> getBricks() {
+        return myBricks;
+    }
+
+    public void removeBrick(Brick brick) {
+        myBricks.remove(brick);
     }
 
 }

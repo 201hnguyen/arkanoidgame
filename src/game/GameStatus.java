@@ -34,11 +34,11 @@ public class GameStatus {
     }
 
     public void decreaseLives(GameScene gameScene) throws Exception {
-        myLives --;
-        if (myLives > 0) {
-            gameScene.getRoot().getChildren().remove(myHearts.get(myHearts.size()-1));
-            myHearts.remove(myHearts.size() -1);
-        }
+//        myLives --;
+//        if (myLives > 0) {
+//            gameScene.getRoot().getChildren().remove(myHearts.get(myHearts.size()-1));
+//            myHearts.remove(myHearts.size() -1);
+//        }
     }
 
     public int getLivesRemaining() {

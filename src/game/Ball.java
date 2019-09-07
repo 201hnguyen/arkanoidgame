@@ -62,11 +62,11 @@ public class Ball {
         if (myBallImageView.getY() <= 0) {
             myDirection[1] *= -1;
         } else if (myBallImageView.getY() >= (GameMain.SCENE_HEIGHT)) {
-            System.out.println("my lives remaining: " + gameScene.getGameStatus().getLivesRemaining());
+//            System.out.println("my lives remaining: " + gameScene.getGameStatus().getLivesRemaining());
             gameScene.getGameStatus().decreaseLives(gameScene);
-            System.out.println("my lives remaining: " + gameScene.getGameStatus().getLivesRemaining());
+//            System.out.println("my lives remaining: " + gameScene.getGameStatus().getLivesRemaining());
             if (gameScene.getGameStatus().getLivesRemaining() == 0) {
-                System.out.println("Losing level");
+//                System.out.println("Losing level");
                 gameScene.loseLevel();
             } else {
                 resetBall(gameScene.getMainCharacter());
