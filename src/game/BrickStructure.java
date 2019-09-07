@@ -4,6 +4,7 @@ import javafx.scene.layout.Pane;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -11,7 +12,8 @@ public class BrickStructure {
     public static final int FIRST_ROW_OFFSET = 50;
 
     private Pane myRoot;
-    private ArrayList<Brick> myBricks = new ArrayList<>();
+//    private ArrayList<Brick> myBricks = new ArrayList<>();
+    private HashMap<Brick, Integer> myBricks = new HashMap();
 
     public BrickStructure(String bricksConfigurationPath, Pane root) throws Exception {
         myRoot = root;
@@ -34,14 +36,16 @@ public class BrickStructure {
     private void setRow(String rowConfiguration, int yCoordinateForRow) {
         int[] rowConfigurationArray = Stream.of(rowConfiguration.split(" " )).mapToInt(Integer::parseInt).toArray();
         int xCoordinateForBrick = 0;
+        int row = 0;
         for (int i=0; i<rowConfigurationArray.length; i++) {
             if (rowConfigurationArray[i] != 0) {
                 Brick brick = new Brick(rowConfigurationArray[i]);
                 brick.getBrickImageView().setX(xCoordinateForBrick);
                 brick.getBrickImageView().setY(yCoordinateForRow);
-                myBricks.add(brick);
+                myBricks.put(brick, row);
                 myRoot.getChildren().add(brick.getBrickImageView());
             }
+            row++;
             xCoordinateForBrick += Brick.BRICK_WIDTH;
         }
     }
@@ -49,7 +53,7 @@ public class BrickStructure {
     public void reconfigureBricksBasedOnHits(GameScene gameScene) {
         Brick brickToDownsize = null;
         double[] brickToDownsizeCoordinates = {0,0};
-        for (Brick brick : myBricks) {
+        for (Brick brick : myBricks.keySet()) {
             if (gameScene.getBall().getBallImageView().getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
                 brickToDownsize = brick;
             }
@@ -95,7 +99,7 @@ public class BrickStructure {
         return myBricks.size();
     }
 
-    public ArrayList<Brick> getBricks() {
+    public HashMap<Brick, Integer> getBricks() {
         return myBricks;
     }
 

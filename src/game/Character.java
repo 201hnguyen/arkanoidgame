@@ -13,6 +13,7 @@ public class Character {
     private ImageView myCurrentCharacterImageView;
     private ImageView mySingleCharacterImageView;
     private ImageView myDoubleCharacterImageView;
+    private ImageView myDumbledoresArmyImageView;
 
 
     public Character(CharacterEnum characterName) {
@@ -25,6 +26,11 @@ public class Character {
         myDoubleCharacterImageView = new ImageView(doubleCharacterImage);
         myDoubleCharacterImageView.setFitWidth(DOUBLE_CHARACTER_WIDTH);
         myDoubleCharacterImageView.setFitHeight(CHARACTER_HEIGHT);
+
+        Image dumbledoresArmyImage = new Image(this.getClass().getClassLoader().getResourceAsStream(CharacterEnum.DUMBLEDORES_ARMY.getCharacterFileName()));
+        myDumbledoresArmyImageView = new ImageView(dumbledoresArmyImage);
+        myDumbledoresArmyImageView.setFitWidth(GameMain.SCENE_WIDTH);
+        myDumbledoresArmyImageView.setFitHeight(CHARACTER_HEIGHT);
     }
 
     public void setCharacterAsPaddle(Pane root) {
@@ -39,7 +45,11 @@ public class Character {
         double currentY = myCurrentCharacterImageView.getY();
         root.getChildren().remove(myCurrentCharacterImageView);
         myCurrentCharacterImageView = desiredCharacterImageView;
-        myCurrentCharacterImageView.setX(currentX);
+        if (myCurrentCharacterImageView == myDumbledoresArmyImageView) {
+            myCurrentCharacterImageView.setX(0);
+        } else {
+            myCurrentCharacterImageView.setX(currentX);
+        }
         myCurrentCharacterImageView.setY(currentY);
         root.getChildren().add(myCurrentCharacterImageView);
     }
@@ -56,9 +66,14 @@ public class Character {
         return myDoubleCharacterImageView;
     }
 
+    public ImageView getDumbledoresArmyImageView() {
+        return myDumbledoresArmyImageView;
+    }
+
     public enum CharacterEnum {
         HARRY_POTTER ("harrypotter.png"),
-        DOUBLE_CHARACTER ("doublecharacter.png");
+        DOUBLE_CHARACTER ("doublecharacter.png"),
+        DUMBLEDORES_ARMY ("dumbledoresarmy.png");
 
         private String myAssociatedFileName;
         CharacterEnum(String fileName) {

@@ -61,6 +61,20 @@ public class GameScene {
             GameMain.resetStage(GameSceneType.INTRO);
         } else if (e.getCode() == KeyCode.W) {
             GameMain.resetStage(GameSceneType.WIN);
+        } else if (e.getCode() == KeyCode.R) {
+            myBall.resetBall(myMainCharacter);
+        } else if (e.getCode() == KeyCode.L) {
+
+        } else if (e.getCode() == KeyCode.D) {
+            myMainCharacter.changeCharacter(myMainCharacter.getDumbledoresArmyImageView(), myRoot);
+        } else if (e.getCode() == KeyCode.B) {
+
+        } else if (e.getCode() == KeyCode.C) {
+
+        } else if (e.getCode() == KeyCode.S) {
+            myMainCharacter.changeCharacter(myMainCharacter.getSingleCharacterImageView(), myRoot);
+        } else {
+            return;
         }
     }
 

@@ -54,10 +54,12 @@ public class Powerup {
     }
 
     private void activateHornPower(Pane root, Character character) {
-        character.changeCharacter(character.getDoubleCharacterImageView(), root);
-        PauseTransition delay = new PauseTransition(Duration.seconds(10));
-        delay.setOnFinished(e -> character.changeCharacter(character.getSingleCharacterImageView(), root));
-        delay.play();
+        if (character.getCharacterImageView() != character.getDumbledoresArmyImageView()) {
+            character.changeCharacter(character.getDoubleCharacterImageView(), root);
+            PauseTransition delay = new PauseTransition(Duration.seconds(10));
+            delay.setOnFinished(e -> character.changeCharacter(character.getSingleCharacterImageView(), root));
+            delay.play();
+        }
     }
 
     private void activateLightningPower(GameScene gameScene) {
@@ -76,7 +78,7 @@ public class Powerup {
     private void makeLightningAndBricksDisappear(ImageView lightning, GameScene gameScene) {
         lightning.setX(lightning.getX());
         ArrayList<Brick> bricksToRemove = new ArrayList<>();
-        for (Brick brick : gameScene.getBrickStructure().getBricks()) {
+        for (Brick brick : gameScene.getBrickStructure().getBricks().keySet()) {
             if (lightning.getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
                 bricksToRemove.add(brick);
             }
