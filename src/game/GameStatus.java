@@ -15,30 +15,41 @@ public class GameStatus {
 
     private ArrayList<ImageView> myHearts = new ArrayList<>();
     private int myLives;
+    private int myCurrentXCoordinate;
 
     public GameStatus(Pane root) {
         myHearts.clear();
         myLives = 3;
-        int xCoordinate = X_OFFSET;
+        myCurrentXCoordinate = X_OFFSET;
         for (int i = 0; i < myLives; i++) {
-            Image heart = new Image(this.getClass().getClassLoader().getResourceAsStream(HEART_IMAGE));
-            ImageView heartImageView = new ImageView(heart);
-            heartImageView.setFitWidth(HEART_WIDTH);
-            heartImageView.setFitHeight(HEART_HEIGHT);
-            heartImageView.setY(Y_OFFSET);
-            heartImageView.setX(xCoordinate);
-            root.getChildren().add(heartImageView);
-            myHearts.add(heartImageView);
-            xCoordinate += HEART_WIDTH + 5;
+            createHeartImageView(root);
         }
     }
 
-    public void decreaseLives(GameScene gameScene) throws Exception {
-//        myLives --;
-//        if (myLives > 0) {
-//            gameScene.getRoot().getChildren().remove(myHearts.get(myHearts.size()-1));
-//            myHearts.remove(myHearts.size() -1);
-//        }
+    private void createHeartImageView(Pane root) {
+        Image heart = new Image(this.getClass().getClassLoader().getResourceAsStream(HEART_IMAGE));
+        ImageView heartImageView = new ImageView(heart);
+        heartImageView.setFitWidth(HEART_WIDTH);
+        heartImageView.setFitHeight(HEART_HEIGHT);
+        heartImageView.setY(Y_OFFSET);
+        heartImageView.setX(myCurrentXCoordinate);
+        root.getChildren().add(heartImageView);
+        myHearts.add(heartImageView);
+        myCurrentXCoordinate += HEART_WIDTH + 5;
+    }
+
+    public void decreaseLives(GameScene gameScene) {
+        myLives --;
+        myCurrentXCoordinate -= HEART_WIDTH + 5;
+        if (myLives > 0) {
+            gameScene.getRoot().getChildren().remove(myHearts.get(myHearts.size()-1));
+            myHearts.remove(myHearts.size() -1);
+        }
+    }
+
+    public void increaseLives(Pane root) {
+        myLives++;
+        createHeartImageView(root);
     }
 
     public int getLivesRemaining() {

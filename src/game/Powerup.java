@@ -15,8 +15,10 @@ public class Powerup {
     private ImageView myPowerupImageView;
     private PowerupType myPowerupType;
     private double[] myPowerBrickCoordinate;
+    private boolean myPowerupIsActivated;
 
     public Powerup(PowerupType type) {
+        myPowerupIsActivated = false;
         myPowerupType = type;
         Image powerupImage = new Image(this.getClass().getClassLoader().getResourceAsStream(type.getPowerupFileName()));
         myPowerupImageView = new ImageView(powerupImage);
@@ -34,30 +36,31 @@ public class Powerup {
     public void setPowerupMotion(double elapsedTime, GameScene gameScene) {
         myPowerupImageView.setY(myPowerupImageView.getY() + POWERUP_SPEED * elapsedTime);
         if (myPowerupImageView.getBoundsInParent().intersects(gameScene.getMainCharacter().getCharacterImageView().getBoundsInParent())) {
+            gameScene.getRoot().getChildren().remove(myPowerupImageView);
             activatePowerup(gameScene);
+            myPowerupIsActivated = true;
         }
     }
 
     private void activatePowerup(GameScene gameScene) {
-        gameScene.getRoot().getChildren().remove(myPowerupImageView);
         if (myPowerupType == PowerupType.POTION) {
-            activatePotionPower();
+            activatePotionPower(gameScene, gameScene.getGameStatus(), gameScene.getRoot());
         } else if (myPowerupType == PowerupType.HORN) {
-            activateHornPower(gameScene.getRoot(), gameScene.getMainCharacter());
+            activateHornPower(gameScene, gameScene.getMainCharacter());
         } else if (myPowerupType == PowerupType.LIGHTNING) {
             activateLightningPower(gameScene);
         }
     }
 
-    private void activatePotionPower() {
-
+    private void activatePotionPower(GameScene gameScene, GameStatus gameStatus, Pane root) {
+        gameStatus.increaseLives(root);
     }
 
-    private void activateHornPower(Pane root, Character character) {
+    private void activateHornPower(GameScene gameScene, Character character) {
         if (character.getCharacterImageView() != character.getDumbledoresArmyImageView()) {
-            character.changeCharacter(character.getDoubleCharacterImageView(), root);
+            character.changeCharacter(character.getDoubleCharacterImageView(), gameScene.getRoot());
             PauseTransition delay = new PauseTransition(Duration.seconds(10));
-            delay.setOnFinished(e -> character.changeCharacter(character.getSingleCharacterImageView(), root));
+            delay.setOnFinished(e -> character.changeCharacter(character.getSingleCharacterImageView(), gameScene.getRoot()));
             delay.play();
         }
     }
@@ -89,6 +92,10 @@ public class Powerup {
             gameScene.getBrickStructure().removeBrick(brickToRemove);
         }
         gameScene.getRoot().getChildren().remove(lightning);
+    }
+
+    public boolean powerupIsActivated() {
+        return myPowerupIsActivated;
     }
 
     public enum PowerupType {

@@ -25,7 +25,7 @@ public class GameScene {
     private GameStatus myGameStatus;
     private ArrayList<Powerup> myPresentPowerups = new ArrayList<>();
 
-    public GameScene(GameSceneType sceneType) throws Exception {
+    public GameScene(GameSceneType sceneType) {
         myGameSceneType = sceneType;
 
         if (myGameSceneType == GameSceneType.LEVEL1) {
@@ -51,7 +51,7 @@ public class GameScene {
         });
     }
 
-    private void handleKeyInput(KeyEvent e) throws Exception {
+    private void handleKeyInput(KeyEvent e) {
         if (e.getCode() == KeyCode.DIGIT1) {
             GameMain.resetStage(GameSceneType.LEVEL1);
         } else if (e.getCode() == KeyCode.DIGIT2) {
@@ -65,7 +65,7 @@ public class GameScene {
         } else if (e.getCode() == KeyCode.R) {
             myBall.resetBall(myMainCharacter);
         } else if (e.getCode() == KeyCode.L) {
-
+            myGameStatus.increaseLives(myRoot);
         } else if (e.getCode() == KeyCode.D) {
             myMainCharacter.changeCharacter(myMainCharacter.getDumbledoresArmyImageView(), myRoot);
         } else if (e.getCode() == KeyCode.B) {
@@ -97,7 +97,7 @@ public class GameScene {
         return scene;
     }
 
-    private Scene generateLevelScene(String bricksConfigPath, GameSceneType nextGameSceneType) throws Exception {
+    private Scene generateLevelScene(String bricksConfigPath, GameSceneType nextGameSceneType) {
         myRoot = new Pane();
         myNextGameSceneType = nextGameSceneType;
         myBrickStructure = new BrickStructure(bricksConfigPath, myRoot);
@@ -121,11 +121,7 @@ public class GameScene {
         button.setLayoutX(GameMain.SCENE_WIDTH / 2 - button.getBoundsInParent().getWidth() / 2); //TODO: Figure out what's going on here
         button.setLayoutY(GameMain.SCENE_HEIGHT - 100);
         button.setOnAction(e -> {
-            try {
-                GameMain.resetStage(myNextGameSceneType);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            GameMain.resetStage(myNextGameSceneType);
         });
         myRoot.getChildren().add(button);
     }
@@ -145,7 +141,7 @@ public class GameScene {
         }
     }
 
-    public void clearLevel(double elapsedTime) throws Exception {
+    public void clearLevel(double elapsedTime) {
         myScene.setOnMouseMoved(null);
         myRoot.getChildren().remove(myBall.getBallImageView());
         myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH / 2 - myMainCharacter.getCharacterImageView().getBoundsInLocal().getWidth() / 2);
@@ -155,8 +151,7 @@ public class GameScene {
         }
     }
 
-    public void loseLevel() throws Exception {
-//            System.out.println("Before stage reset");
+    public void loseLevel() {
             GameMain.resetStage(GameSceneType.LOSE);
     }
 
@@ -193,6 +188,10 @@ public class GameScene {
 
     public ArrayList<Powerup> getPresentPowerups() {
         return myPresentPowerups;
+    }
+
+    public void removeActivatedPowerup(Powerup powerup) {
+        myPresentPowerups.remove(powerup);
     }
 
     public GameSceneType getGameSceneType() {

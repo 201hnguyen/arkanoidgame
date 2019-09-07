@@ -3,6 +3,7 @@ package game;
 import javafx.scene.layout.Pane;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -15,22 +16,28 @@ public class BrickStructure {
 //    private ArrayList<Brick> myBricks = new ArrayList<>();
     private HashMap<Brick, Integer> myBricks = new HashMap();
 
-    public BrickStructure(String bricksConfigurationPath, Pane root) throws Exception {
+    public BrickStructure(String bricksConfigurationPath, Pane root) {
         myRoot = root;
         setupBricksConfig(bricksConfigurationPath);
     }
 
-    private void setupBricksConfig(String path) throws Exception {
+    private void setupBricksConfig(String path) {
         File bricksConfig = new File(path);
-        Scanner scanner = new Scanner(bricksConfig);
-        int yCoordinateForRow = FIRST_ROW_OFFSET;
 
-        while (scanner.hasNextLine()) {
-            String rowConfiguration = scanner.nextLine();
-            setRow(rowConfiguration, yCoordinateForRow);
-            yCoordinateForRow += Brick.BRICK_HEIGHT;
+        try {
+            Scanner scanner = new Scanner(bricksConfig);
+
+            int yCoordinateForRow = FIRST_ROW_OFFSET;
+
+            while (scanner.hasNextLine()) {
+                String rowConfiguration = scanner.nextLine();
+                setRow(rowConfiguration, yCoordinateForRow);
+                yCoordinateForRow += Brick.BRICK_HEIGHT;
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found exception");
         }
-        scanner.close();
     }
 
     private void setRow(String rowConfiguration, int yCoordinateForRow) {

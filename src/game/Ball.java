@@ -28,7 +28,7 @@ public class Ball {
         myDirection = new int[]{0, -1};
     }
 
-    public void setBallMotion(double elapsedTime, GameScene gameScene) throws Exception {
+    public void setBallMotion(double elapsedTime, GameScene gameScene) {
         myBallImageView.setX(myBallImageView.getX() + myDirection[0] * BALL_SPEED * elapsedTime);
         myBallImageView.setY(myBallImageView.getY() + myDirection[1] * BALL_SPEED * elapsedTime);
         paddleCollisionCheck(gameScene.getMainCharacter());
@@ -54,7 +54,7 @@ public class Ball {
         }
     }
 
-    private void wallCollisionCheck(GameScene gameScene) throws Exception {
+    private void wallCollisionCheck(GameScene gameScene) {
         if (myBallImageView.getX() <= 0 || myBallImageView.getX() >= GameMain.SCENE_WIDTH - myBallImageView.getBoundsInLocal().getWidth()) {
             myDirection[0] *= -1;
         }
@@ -62,11 +62,8 @@ public class Ball {
         if (myBallImageView.getY() <= 0) {
             myDirection[1] *= -1;
         } else if (myBallImageView.getY() >= (GameMain.SCENE_HEIGHT)) {
-//            System.out.println("my lives remaining: " + gameScene.getGameStatus().getLivesRemaining());
             gameScene.getGameStatus().decreaseLives(gameScene);
-//            System.out.println("my lives remaining: " + gameScene.getGameStatus().getLivesRemaining());
             if (gameScene.getGameStatus().getLivesRemaining() == 0) {
-//                System.out.println("Losing level");
                 gameScene.loseLevel();
             } else {
                 resetBall(gameScene.getMainCharacter());
