@@ -11,7 +11,6 @@ import javafx.scene.layout.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Stream;
@@ -216,6 +215,9 @@ public class GameScene {
     }
 
     public void clearLevel(double elapsedTime) {
+        for (int i=0; i<myGameStatus.getLivesRemaining(); i++) {
+            GameMain.increaseScore(10);
+        }
         myScene.setOnMouseMoved(null);
         myRoot.getChildren().remove(myBall.getBallImageView());
         myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH / 2 - myMainCharacter.getCharacterImageView().getBoundsInLocal().getWidth() / 2);

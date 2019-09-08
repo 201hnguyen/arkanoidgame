@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 public class Ball {
     public static final String BALL_IMAGE = "ball.png";
     public static final int BALL_SIZE = 50;
-    public static final int BALL_SPEED = 350;
+    public static final int BALL_SPEED = 400;
 
     private int[] myDirection;
     private ImageView myBallImageView;
@@ -69,6 +69,7 @@ public class Ball {
     private void deadzoneCollisionCheck(GameScene gameScene) {
         for (BackgroundStructure deadZone : gameScene.getDeadZones()) {
             if (myBallImageView.getBoundsInParent().intersects(deadZone.getStructureImageView().getBoundsInParent())) {
+                GameMain.decreaseScore(500);
                 gameScene.getGameStatus().decreaseLives(gameScene);
             }
         }

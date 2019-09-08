@@ -14,6 +14,7 @@ public class Brick {
     private ImageView myBrickImageView;
     private Powerup myPowerup;
     private int myRow;
+    private int myPointsValue;
 
     public Brick(int hitsId, int row) {
         myRow = row;
@@ -21,24 +22,30 @@ public class Brick {
         if (myBrickId == 1) {
             myBrickImageView = createBrick(BrickType.ONE_HIT);
             myHitsRemaining = hitsId;
+            myPointsValue = 50;
         } else if (myBrickId == 2) {
             myBrickImageView = createBrick(BrickType.TWO_HIT);
             myHitsRemaining = hitsId;
+            myPointsValue = 150;
         } else if (myBrickId == 3) {
             myBrickImageView = createBrick(BrickType.THREE_HIT);
             myHitsRemaining = hitsId;
+            myPointsValue = 250;
         } else if (myBrickId == 4) {
             myBrickImageView = createBrick(BrickType.ONE_HIT);
             myHitsRemaining = hitsId - POWER_BRICKS_ID_OFFSET;
             myPowerup = new Powerup(Powerup.PowerupType.HORN);
+            myPointsValue = 100;
         } else if (myBrickId == 5) {
             myBrickImageView = createBrick(BrickType.TWO_HIT);
             myHitsRemaining = hitsId - POWER_BRICKS_ID_OFFSET;
             myPowerup = new Powerup(Powerup.PowerupType.POTION);
+            myPointsValue = 200;
         } else if (myBrickId == 6) {
             myBrickImageView = createBrick(BrickType.THREE_HIT);
             myHitsRemaining = hitsId - POWER_BRICKS_ID_OFFSET;
             myPowerup = new Powerup(Powerup.PowerupType.LIGHTNING);
+            myPointsValue = 300;
         }
     }
 
@@ -51,8 +58,10 @@ public class Brick {
     }
 
     public void downsizeBrick(GameScene gameScene) {
+        GameMain.increaseScore(myPointsValue);
         myHitsRemaining--;
         if (myHitsRemaining == 0) {
+            GameMain.increaseScore(myPointsValue);
             gameScene.getRoot().getChildren().remove(myBrickImageView);
             gameScene.getBricks().remove(this);
 
