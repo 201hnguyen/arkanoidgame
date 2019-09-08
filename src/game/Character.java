@@ -1,5 +1,6 @@
 package game;
 
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -65,11 +66,16 @@ public class Character {
         root.getChildren().add(myCurrentCharacterImageView);
     }
 
-    public void movePaddleOnMouseInput (double x) {
+    public void movePaddleOnMouseInput(double x) {
         myCurrentCharacterImageView.setX(x);
         if (myCurrentCharacterImageView.getBoundsInLocal().getMaxX() >= GameMain.SCENE_WIDTH) {
             myCurrentCharacterImageView.setX(GameMain.SCENE_WIDTH - myCurrentCharacterImageView.getFitWidth());
         }
+    }
+
+    public void blurCharacter(Pane root) {
+        GaussianBlur blur = new GaussianBlur(100);
+        myCurrentCharacterImageView.setEffect(blur);
     }
 
     public ImageView getCharacterImageView() {

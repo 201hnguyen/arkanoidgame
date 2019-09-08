@@ -67,8 +67,10 @@ public class Ball {
     private void deadzoneCollisionCheck(GameScene gameScene) {
         for (BackgroundStructure deadZone : gameScene.getDeadZones()) {
             if (myBallImageView.getBoundsInParent().intersects(deadZone.getStructureImageView().getBoundsInParent())) {
+                gameScene.getMainCharacter().blurCharacter(gameScene.getRoot());
                 gameScene.getGameStatus().decreaseScore(5000);
                 gameScene.getGameStatus().decreaseLives(gameScene);
+                resetBall(gameScene.getMainCharacter());
             }
         }
     }
