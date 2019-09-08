@@ -52,7 +52,7 @@ public class Powerup {
 
     private void activatePowerup(GameScene gameScene) {
         if (myPowerupType == PowerupType.POTION) {
-            activatePotionPower(gameScene, gameScene.getGameStatus(), gameScene.getRoot());
+            activatePotionPower(gameScene.getGameStatus(), gameScene.getRoot());
         } else if (myPowerupType == PowerupType.HORN) {
             activateHornPower(gameScene, gameScene.getMainCharacter());
         } else if (myPowerupType == PowerupType.LIGHTNING) {
@@ -60,7 +60,7 @@ public class Powerup {
         }
     }
 
-    private void activatePotionPower(GameScene gameScene, GameStatus gameStatus, Pane root) {
+    private void activatePotionPower(GameStatus gameStatus, Pane root) {
         gameStatus.increaseLives(root);
     }
 
@@ -87,7 +87,6 @@ public class Powerup {
     }
 
     private void makeLightningAndBricksDisappear(ImageView lightning, GameScene gameScene) {
-        lightning.setX(lightning.getX());
         ArrayList<Brick> bricksToRemove = new ArrayList<>();
         for (Brick brick : gameScene.getBricks()) {
             if (lightning.getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {

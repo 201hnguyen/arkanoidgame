@@ -27,7 +27,7 @@ public class Brick {
             myBrickType = BrickType.ONE_HIT_POWER;
             myPowerup = new Powerup(Powerup.PowerupType.HORN);
         } else if (brickId == 5) {
-            myBrickType = BrickType.ONE_HIT_POWER;
+            myBrickType = BrickType.TWO_HIT_POWER;
             myPowerup = new Powerup(Powerup.PowerupType.POTION);
         } else if (brickId == 6) {
             myBrickType = BrickType.THREE_HIT_POWER;
@@ -79,7 +79,7 @@ public class Brick {
         THREE_HIT_REGULAR ("brick3.png", 1500),
         ONE_HIT_POWER ("brick1.png", 2000),
         TWO_HIT_POWER ("brick2.png", 2500),
-        THREE_HIT_POWER ("brick1.png", 3000);
+        THREE_HIT_POWER ("brick3.png", 3000);
 
         private String myBrickImagePath;
         private int myPointsValue;

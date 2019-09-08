@@ -60,6 +60,7 @@ public class Ball {
             myDirection[1] *= -1;
         } else if (myBallImageView.getY() >= (GameMain.SCENE_HEIGHT)) {
             gameScene.getGameStatus().decreaseLives(gameScene);
+            resetBall(gameScene.getMainCharacter());
         }
     }
 
