@@ -14,7 +14,7 @@ public class GameMain extends Application {
     public static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
 
-    private static GameScene myCurrentGameScene;
+    private static GameScene currentGameScene;
 
     public static void main(String[] args) {
         launch(args);
@@ -28,12 +28,12 @@ public class GameMain extends Application {
     }
 
     public static void resetStage(Stage stage, GameScene.GameSceneType gameSceneType, GameStatus gameStatus) {
-        myCurrentGameScene = new GameScene(stage, gameSceneType, gameStatus);
-        if (myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL1 ||
-                myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL2 ||
-                myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL3) {
+        currentGameScene = new GameScene(stage, gameSceneType, gameStatus);
+        if (currentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL1 ||
+                currentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL2 ||
+                currentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL3) {
         }
-        stage.setScene(myCurrentGameScene.getScene());
+        stage.setScene(currentGameScene.getScene());
         stage.setTitle("Breakout Harry Potter Adventure");
         stage.setResizable(false);
         stage.show();
@@ -41,10 +41,10 @@ public class GameMain extends Application {
 
     public static void setAnimation() {
         var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> {
-            if (myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL1 ||
-                    myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL2 ||
-                    myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL3) {
-                stepThroughLevel(myCurrentGameScene, SECOND_DELAY);
+            if (currentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL1 ||
+                    currentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL2 ||
+                    currentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL3) {
+                stepThroughLevel(currentGameScene, SECOND_DELAY);
             }
         });
 
@@ -63,5 +63,4 @@ public class GameMain extends Application {
             gameScene.handlePowerup(elapsedTime);
         }
     }
-
 }
