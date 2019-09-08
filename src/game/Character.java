@@ -44,6 +44,13 @@ public class Character {
         root.getChildren().add(myCurrentCharacterImageView);
     }
 
+    public void changePosition(int value) {
+        myCurrentCharacterImageView.setY(myCurrentCharacterImageView.getY() - value);
+        if (myCurrentCharacterImageView.getY() >= GameMain.SCENE_HEIGHT - myCurrentCharacterImageView.getFitHeight()) {
+            myCurrentCharacterImageView.setY(GameMain.SCENE_HEIGHT - myCurrentCharacterImageView.getFitHeight());
+        }
+    }
+
     public void changeCharacter(ImageView desiredCharacterImageView, Pane root) {
         double x = myCurrentCharacterImageView.getX();
         double y = myCurrentCharacterImageView.getY();

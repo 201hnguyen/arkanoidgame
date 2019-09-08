@@ -182,6 +182,10 @@ public class GameScene {
             } catch (NullPointerException ex) {
                 System.out.println("Cannot create single character when not in a level");
             }
+        } else if (e.getCode() == KeyCode.UP) {
+            myMainCharacter.changePosition(10);
+        } else if (e.getCode() == KeyCode.DOWN) {
+            myMainCharacter.changePosition(-10);
         } else {
             return;
         }
