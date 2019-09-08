@@ -168,7 +168,11 @@ public class GameScene {
         } else if (e.getCode() == KeyCode.V) {
             myRoot.setEffect(new GaussianBlur(0));
         } else if (e.getCode() == KeyCode.C) {
-
+            try {
+                clearRow();
+            } catch (NullPointerException ex) {
+                System.out.println("Cannot clear brick when not in a level");
+            }
         } else if (e.getCode() == KeyCode.S) {
             try {
                 myMainCharacter.changeCharacter(myMainCharacter.getSingleCharacterImageView(), myRoot);
@@ -177,6 +181,25 @@ public class GameScene {
             }
         } else {
             return;
+        }
+    }
+
+    private void clearRow() {
+        int lowestRow = 0;
+        ArrayList<Brick> brickInLowestRow = new ArrayList<>();
+        for (Brick brick : myBricks) {
+            if (brick.getRow() > lowestRow) {
+                lowestRow = brick.getRow();
+            }
+        }
+        for (Brick brick : myBricks) {
+            if (brick.getRow() == lowestRow) {
+                brickInLowestRow.add(brick);
+            }
+        }
+        for (Brick brick : brickInLowestRow) {
+            myRoot.getChildren().remove(brick.getBrickImageView());
+            myBricks.remove(brick);
         }
     }
 

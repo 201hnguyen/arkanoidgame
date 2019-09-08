@@ -66,8 +66,8 @@ public class Brick {
         return myBrickImageView;
     }
 
-    public Powerup getPowerup() {
-        return myPowerup;
+    public int getRow() {
+        return myRow;
     }
 
     public enum BrickType {
