@@ -58,7 +58,6 @@ public class Ball {
         if (myBallImageView.getX() <= 0 || myBallImageView.getX() >= GameMain.SCENE_WIDTH - myBallImageView.getBoundsInLocal().getWidth()) {
             myDirection[0] *= -1;
         }
-
         if (myBallImageView.getY() <= 0) {
             myDirection[1] *= -1;
         } else if (myBallImageView.getY() >= (GameMain.SCENE_HEIGHT)) {
@@ -71,23 +70,24 @@ public class Ball {
         }
     }
 
+    public void reflectBall(Brick brickToDownsize) {
+        boolean ballComesFromTop = myBallImageView.getBoundsInParent().getCenterY() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinY();
+        boolean ballComesFromBottom = myBallImageView.getBoundsInParent().getCenterY() >= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxY();
+        boolean ballComesFromLeft = myBallImageView.getBoundsInParent().getCenterX() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinX();
+        boolean ballComesFromRight = myBallImageView.getBoundsInParent().getCenterX() >= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxX();
+
+        if (ballComesFromTop && ballComesFromLeft || ballComesFromTop && ballComesFromRight ||
+                ballComesFromBottom && ballComesFromLeft || ballComesFromBottom && ballComesFromRight) {
+            myDirection[0] *= -1;
+            myDirection[1] *= -1;
+        } else if (ballComesFromBottom || ballComesFromTop) {
+            myDirection[1] *= -1;
+        } else if (ballComesFromLeft || ballComesFromRight) {
+            myDirection[0] *= -1;
+        }
+    }
+
     public ImageView getBallImageView() {
         return myBallImageView;
-    }
-
-    public int getXDirection() {
-        return myDirection[0];
-    }
-
-    public int getYDirection() {
-        return myDirection[1];
-    }
-
-    public void setXDirection(int x) {
-        myDirection[0] = x;
-    }
-
-    public void setYDirection(int y) {
-        myDirection[1] = y;
     }
 }

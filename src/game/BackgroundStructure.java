@@ -10,13 +10,12 @@ public class BackgroundStructure {
 
     private ImageView myStructureImageView;
 
-    public BackgroundStructure(StructureEnum structure) {
+    public BackgroundStructure(StructureType structure, Pane root) {
         Image structureImage = new Image(this.getClass().getClassLoader().getResourceAsStream(structure.getStructureFileName()));
         myStructureImageView = new ImageView(structureImage);
-    }
-
-    public ImageView getStructureImageView() {
-        return myStructureImageView;
+        if (structure == StructureType.DOOR) {
+            setStructureAsDoor(root);
+        }
     }
 
     public void setStructureAsDoor(Pane root) {
@@ -25,16 +24,18 @@ public class BackgroundStructure {
         root.getChildren().add(this.getStructureImageView());
     }
 
-    public enum StructureEnum {
+    public ImageView getStructureImageView() {
+        return myStructureImageView;
+    }
+
+    public enum StructureType {
         DOOR ("door.png");
-
-        private String myAssociatedFileName;
-        StructureEnum(String fileName) {
-            myAssociatedFileName = fileName;
+        private String myFileName;
+        StructureType(String fileName) {
+            myFileName = fileName;
         }
-
         public String getStructureFileName() {
-            return myAssociatedFileName;
+            return myFileName;
         }
     }
 }

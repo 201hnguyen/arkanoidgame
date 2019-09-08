@@ -6,9 +6,12 @@ import javafx.scene.layout.Pane;
 
 public class Character {
     public static final int CHARACTER_HEIGHT = 150;
-    public static final int CHARACTER_WIDTH = 200;
+    public static final int SINGLE_CHARACTER_WIDTH = 200;
     public static final int DOUBLE_CHARACTER_WIDTH = 350;
     public static final int THIRD_DIVISION = 50;
+    public static final String SINGLE_CHARACTER_IMAGE_PATH = "charactersingle.png";
+    public static final String DOUBLE_CHARACTER_IMAGE_PATH = "characterdouble.png";
+    public static final String ARMY_CHARACTER_IMAGE_PATH = "characterarmy.png";
 
     private ImageView myCurrentCharacterImageView;
     private ImageView mySingleCharacterImageView;
@@ -16,42 +19,51 @@ public class Character {
     private ImageView myDumbledoresArmyImageView;
 
 
-    public Character(CharacterEnum characterName) {
-        Image characterImage = new Image(this.getClass().getClassLoader().getResourceAsStream(characterName.getCharacterFileName()));
-        mySingleCharacterImageView = new ImageView(characterImage);
-        mySingleCharacterImageView.setFitWidth(CHARACTER_WIDTH);
-        mySingleCharacterImageView.setFitHeight(CHARACTER_HEIGHT);
+    public Character(Pane root) {
+        mySingleCharacterImageView = createCharacter(SINGLE_CHARACTER_IMAGE_PATH, SINGLE_CHARACTER_WIDTH);
 
-        Image doubleCharacterImage = new Image(this.getClass().getClassLoader().getResourceAsStream(CharacterEnum.DOUBLE_CHARACTER.getCharacterFileName()));
-        myDoubleCharacterImageView = new ImageView(doubleCharacterImage);
-        myDoubleCharacterImageView.setFitWidth(DOUBLE_CHARACTER_WIDTH);
-        myDoubleCharacterImageView.setFitHeight(CHARACTER_HEIGHT);
+        myDoubleCharacterImageView = createCharacter(DOUBLE_CHARACTER_IMAGE_PATH, DOUBLE_CHARACTER_WIDTH);
 
-        Image dumbledoresArmyImage = new Image(this.getClass().getClassLoader().getResourceAsStream(CharacterEnum.DUMBLEDORES_ARMY.getCharacterFileName()));
-        myDumbledoresArmyImageView = new ImageView(dumbledoresArmyImage);
-        myDumbledoresArmyImageView.setFitWidth(GameMain.SCENE_WIDTH);
-        myDumbledoresArmyImageView.setFitHeight(CHARACTER_HEIGHT);
+        myDumbledoresArmyImageView = createCharacter(ARMY_CHARACTER_IMAGE_PATH, GameMain.SCENE_WIDTH);
+
+        myCurrentCharacterImageView = mySingleCharacterImageView;
+        setCurrentCharacterAsPaddle(root);
     }
 
-    public void setCharacterAsPaddle(Pane root) {
-        myCurrentCharacterImageView = mySingleCharacterImageView;
-        myCurrentCharacterImageView.setX(GameMain.SCENE_WIDTH / 2 - CHARACTER_WIDTH / 2);
+    private ImageView createCharacter(String characterImagePath, int characterWidth) {
+        Image image = new Image(this.getClass().getClassLoader().getResourceAsStream(characterImagePath));
+        ImageView characterImageView = new ImageView(image);
+        characterImageView.setFitWidth(characterWidth);
+        characterImageView.setFitHeight(CHARACTER_HEIGHT);
+        return characterImageView;
+    }
+
+    private void setCurrentCharacterAsPaddle(Pane root) {
+        myCurrentCharacterImageView.setX(GameMain.SCENE_WIDTH / 2 - SINGLE_CHARACTER_WIDTH / 2);
         myCurrentCharacterImageView.setY(GameMain.SCENE_HEIGHT - CHARACTER_HEIGHT);
         root.getChildren().add(myCurrentCharacterImageView);
     }
 
     public void changeCharacter(ImageView desiredCharacterImageView, Pane root) {
-        double currentX = myCurrentCharacterImageView.getX();
-        double currentY = myCurrentCharacterImageView.getY();
+        double x = myCurrentCharacterImageView.getX();
+        double y = myCurrentCharacterImageView.getY();
         root.getChildren().remove(myCurrentCharacterImageView);
+
         myCurrentCharacterImageView = desiredCharacterImageView;
         if (myCurrentCharacterImageView == myDumbledoresArmyImageView) {
             myCurrentCharacterImageView.setX(0);
         } else {
-            myCurrentCharacterImageView.setX(currentX);
+            myCurrentCharacterImageView.setX(x);
         }
-        myCurrentCharacterImageView.setY(currentY);
+        myCurrentCharacterImageView.setY(y);
         root.getChildren().add(myCurrentCharacterImageView);
+    }
+
+    public void movePaddleOnMouseInput (double x) {
+        myCurrentCharacterImageView.setX(x);
+        if (myCurrentCharacterImageView.getBoundsInLocal().getMaxX() >= GameMain.SCENE_WIDTH) {
+            myCurrentCharacterImageView.setX(GameMain.SCENE_WIDTH - myCurrentCharacterImageView.getFitWidth());
+        }
     }
 
     public ImageView getCharacterImageView() {
@@ -69,20 +81,4 @@ public class Character {
     public ImageView getDumbledoresArmyImageView() {
         return myDumbledoresArmyImageView;
     }
-
-    public enum CharacterEnum {
-        HARRY_POTTER ("harrypotter.png"),
-        DOUBLE_CHARACTER ("doublecharacter.png"),
-        DUMBLEDORES_ARMY ("dumbledoresarmy.png");
-
-        private String myAssociatedFileName;
-        CharacterEnum(String fileName) {
-            myAssociatedFileName = fileName;
-        }
-
-        public String getCharacterFileName() {
-            return myAssociatedFileName;
-        }
-    }
-
 }

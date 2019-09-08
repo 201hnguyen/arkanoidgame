@@ -20,11 +20,19 @@ public class Powerup {
     public Powerup(PowerupType type) {
         myPowerupIsActivated = false;
         myPowerupType = type;
+        myPowerBrickCoordinate = new double[]{0,0};
+
         Image powerupImage = new Image(this.getClass().getClassLoader().getResourceAsStream(type.getPowerupFileName()));
         myPowerupImageView = new ImageView(powerupImage);
         myPowerupImageView.setFitWidth(ICON_SIZE);
         myPowerupImageView.setFitHeight(ICON_SIZE);
-        myPowerBrickCoordinate = new double[]{0,0};
+    }
+
+    public void setPowerup(Brick brickWithPowerup, GameScene gameScene) {
+        revealPowerup(brickWithPowerup, gameScene.getRoot());
+        gameScene.addToPresentPowerups(this);
+        setPowerBrickCoordinate(brickWithPowerup.getBrickImageView().getBoundsInParent().getCenterX(),
+                brickWithPowerup.getBrickImageView().getBoundsInParent().getMinY());
     }
 
     public void revealPowerup(Brick brick, Pane root) {
@@ -81,7 +89,7 @@ public class Powerup {
     private void makeLightningAndBricksDisappear(ImageView lightning, GameScene gameScene) {
         lightning.setX(lightning.getX());
         ArrayList<Brick> bricksToRemove = new ArrayList<>();
-        for (Brick brick : gameScene.getBrickStructure().getBricks().keySet()) {
+        for (Brick brick : gameScene.getBricks()) {
             if (lightning.getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
                 bricksToRemove.add(brick);
             }
@@ -89,9 +97,14 @@ public class Powerup {
 
         for (Brick brickToRemove : bricksToRemove) {
             gameScene.getRoot().getChildren().remove(brickToRemove.getBrickImageView());
-            gameScene.getBrickStructure().removeBrick(brickToRemove);
+            gameScene.getBricks().remove(brickToRemove);
         }
         gameScene.getRoot().getChildren().remove(lightning);
+    }
+
+    private void setPowerBrickCoordinate(double x, double y) {
+        myPowerBrickCoordinate[0] = x;
+        myPowerBrickCoordinate[1] = y;
     }
 
     public boolean powerupIsActivated() {
@@ -111,10 +124,5 @@ public class Powerup {
         private String getPowerupFileName() {
             return myAssociatedFileName;
         }
-    }
-
-    public void setPowerBrickCoordinate(double x, double y) {
-        myPowerBrickCoordinate[0] = x;
-        myPowerBrickCoordinate[1] = y;
     }
 }

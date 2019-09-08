@@ -13,8 +13,10 @@ public class Brick {
     private int myHitsRemaining;
     private ImageView myBrickImageView;
     private Powerup myPowerup;
+    private int myRow;
 
-    public Brick(int hitsId) {
+    public Brick(int hitsId, int row) {
+        myRow = row;
         myBrickId = hitsId;
         if (myBrickId == 1) {
             myBrickImageView = createBrick(BrickType.ONE_HIT);
@@ -48,20 +50,20 @@ public class Brick {
         return brick;
     }
 
-    public void decreaseHitsRemaining() {
+    public void downsizeBrick(GameScene gameScene) {
         myHitsRemaining--;
-    }
+        if (myHitsRemaining == 0) {
+            gameScene.getRoot().getChildren().remove(myBrickImageView);
+            gameScene.getBricks().remove(this);
 
-    public int getHitsRemaining() {
-        return myHitsRemaining;
+            if (myBrickId == 4 || myBrickId == 5 || myBrickId == 6) {
+                myPowerup.setPowerup(this, gameScene);
+            }
+        }
     }
 
     public ImageView getBrickImageView() {
         return myBrickImageView;
-    }
-
-    public int getBrickId() {
-        return myBrickId;
     }
 
     public Powerup getPowerup() {

@@ -6,8 +6,6 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-
 public class GameMain extends Application {
     public static final int SCENE_WIDTH = 1000;
     public static final int SCENE_HEIGHT = 800;
@@ -17,7 +15,6 @@ public class GameMain extends Application {
 
     private static Stage myStage;
     private static GameScene myCurrentGameScene;
-    private static Timeline myTimeline;
 
     public static void main(String[] args) {
         launch(args);
@@ -26,11 +23,11 @@ public class GameMain extends Application {
     @Override
     public void start(Stage stage) {
         myStage = stage;
-        resetStage(GameSceneType.INTRO);
+        resetStage(GameScene.GameSceneType.INTRO);
         setAnimation();
     }
 
-    public static void resetStage(GameSceneType gameSceneType) {
+    public static void resetStage(GameScene.GameSceneType gameSceneType) {
         myCurrentGameScene = new GameScene(gameSceneType);
         myStage.setScene(myCurrentGameScene.getScene());
         myStage.setTitle("Breakout Harry Potter Adventure");
@@ -40,36 +37,26 @@ public class GameMain extends Application {
 
     public static void setAnimation() {
         var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> {
-            if (myCurrentGameScene.getGameSceneType() == GameSceneType.LEVEL1 ||
-                    myCurrentGameScene.getGameSceneType() == GameSceneType.LEVEL2 ||
-                    myCurrentGameScene.getGameSceneType() == GameSceneType.LEVEL3) {
+            if (myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL1 ||
+                    myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL2 ||
+                    myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL3) {
                 stepThroughLevel(myCurrentGameScene, SECOND_DELAY);
             }
         });
 
-        myTimeline = new Timeline();
-        myTimeline.setCycleCount(Timeline.INDEFINITE);
-        myTimeline.getKeyFrames().add(frame);
-        myTimeline.play();
+        var timeline = new Timeline();
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.getKeyFrames().add(frame);
+        timeline.play();
     }
 
     private static void stepThroughLevel(GameScene gameScene, double elapsedTime) {
-        ArrayList<Powerup> activatedPowerup = new ArrayList<>();
-        if (gameScene.getBrickStructure().getBricksRemaining() == 0) {
+        if (gameScene.getBricks().size() == 0) {
             gameScene.clearLevel(elapsedTime);
         } else {
             gameScene.getBall().setBallMotion(elapsedTime, gameScene);
-            gameScene.getBrickStructure().reconfigureBricksBasedOnHits(gameScene);
-            for (Powerup powerup : gameScene.getPresentPowerups()) {
-                powerup.setPowerupMotion(elapsedTime, gameScene);
-                if (powerup.powerupIsActivated()) {
-                    activatedPowerup.add(powerup);
-                }
-            }
-
-            for (Powerup powerup : activatedPowerup) {
-                gameScene.removeActivatedPowerup(powerup);
-            }
+            gameScene.reconfigureBricksBasedOnHits();
+            gameScene.handlePowerup(elapsedTime);
         }
     }
 }

@@ -12,21 +12,20 @@ public class GameStatus {
     public static final int HEART_HEIGHT = 30;
     public static final int X_OFFSET = 95;
     public static final int Y_OFFSET = 5;
+    public static final int INITIAL_LIVES = 3;
 
     private ArrayList<ImageView> myHearts = new ArrayList<>();
-    private int myLives;
     private int myCurrentXCoordinate;
 
     public GameStatus(Pane root) {
         myHearts.clear();
-        myLives = 3;
         myCurrentXCoordinate = X_OFFSET;
-        for (int i = 0; i < myLives; i++) {
-            createHeartImageView(root);
+        for (int i = 0; i < INITIAL_LIVES; i++) {
+            addHeartImageView(root);
         }
     }
 
-    private void createHeartImageView(Pane root) {
+    private void addHeartImageView(Pane root) {
         Image heart = new Image(this.getClass().getClassLoader().getResourceAsStream(HEART_IMAGE));
         ImageView heartImageView = new ImageView(heart);
         heartImageView.setFitWidth(HEART_WIDTH);
@@ -39,20 +38,18 @@ public class GameStatus {
     }
 
     public void decreaseLives(GameScene gameScene) {
-        myLives --;
         myCurrentXCoordinate -= HEART_WIDTH + 5;
-        if (myLives > 0) {
+        if (myHearts.size() > 0) {
             gameScene.getRoot().getChildren().remove(myHearts.get(myHearts.size()-1));
             myHearts.remove(myHearts.size() -1);
         }
     }
 
     public void increaseLives(Pane root) {
-        myLives++;
-        createHeartImageView(root);
+        addHeartImageView(root);
     }
 
     public int getLivesRemaining() {
-        return myLives;
+        return myHearts.size();
     }
 }
