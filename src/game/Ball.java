@@ -2,7 +2,6 @@ package game;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 
 public class Ball {
     public static final String BALL_IMAGE = "ball.png";
@@ -45,7 +44,6 @@ public class Ball {
                 myDirection[0] = -1;
                 myDirection[1] = -1;
             } else if (myBallImageView.getBoundsInParent().getCenterX() >= character.getCharacterImageView().getBoundsInParent().getCenterX() + Character.THIRD_DIVISION) {
-
                 myDirection[0] = 1;
                 myDirection[1] = -1;
             } else {
@@ -68,7 +66,7 @@ public class Ball {
     private void deadzoneCollisionCheck(GameScene gameScene) {
         for (BackgroundStructure deadZone : gameScene.getDeadZones()) {
             if (myBallImageView.getBoundsInParent().intersects(deadZone.getStructureImageView().getBoundsInParent())) {
-                gameScene.getGameStatus().decreaseScore(500);
+                gameScene.getGameStatus().decreaseScore(5000);
                 gameScene.getGameStatus().decreaseLives(gameScene);
             }
         }

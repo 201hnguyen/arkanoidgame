@@ -4,56 +4,50 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Brick {
-
     public static final int BRICK_WIDTH = 100;
     public static final int BRICK_HEIGHT = 50;
-    public static final int POWER_BRICKS_ID_OFFSET = 3;
+    public static final int POWER_BRICKS_POINTS_OFFSET = 3;
 
-    private int myBrickId;
+    private BrickType myBrickType;
     private int myHitsRemaining;
     private ImageView myBrickImageView;
     private Powerup myPowerup;
     private int myRow;
     private int myPointsValue;
 
-    public Brick(int hitsId, int row) {
+    public Brick(int brickId, int row) {
         myRow = row;
-        myBrickId = hitsId;
-        if (myBrickId == 1) {
-            myBrickImageView = createBrick(BrickType.ONE_HIT);
-            myHitsRemaining = hitsId;
-            myPointsValue = 500;
-        } else if (myBrickId == 2) {
-            myBrickImageView = createBrick(BrickType.TWO_HIT);
-            myHitsRemaining = hitsId;
-            myPointsValue = 1500;
-        } else if (myBrickId == 3) {
-            myBrickImageView = createBrick(BrickType.THREE_HIT);
-            myHitsRemaining = hitsId;
-            myPointsValue = 2500;
-        } else if (myBrickId == 4) {
-            myBrickImageView = createBrick(BrickType.ONE_HIT);
-            myHitsRemaining = hitsId - POWER_BRICKS_ID_OFFSET;
+        if (brickId == 1) {
+            myBrickType = BrickType.ONE_HIT_REGULAR;
+        } else if (brickId == 2) {
+            myBrickType = BrickType.TWO_HIT_REGULAR;
+        } else if (brickId == 3) {
+            myBrickType = BrickType.THREE_HIT_REGULAR;
+        } else if (brickId == 4) {
+            myBrickType = BrickType.ONE_HIT_POWER;
             myPowerup = new Powerup(Powerup.PowerupType.HORN);
-            myPointsValue = 1000;
-        } else if (myBrickId == 5) {
-            myBrickImageView = createBrick(BrickType.TWO_HIT);
-            myHitsRemaining = hitsId - POWER_BRICKS_ID_OFFSET;
+        } else if (brickId == 5) {
+            myBrickType = BrickType.ONE_HIT_POWER;
             myPowerup = new Powerup(Powerup.PowerupType.POTION);
-            myPointsValue = 2000;
-        } else if (myBrickId == 6) {
-            myBrickImageView = createBrick(BrickType.THREE_HIT);
-            myHitsRemaining = hitsId - POWER_BRICKS_ID_OFFSET;
+        } else if (brickId == 6) {
+            myBrickType = BrickType.THREE_HIT_POWER;
             myPowerup = new Powerup(Powerup.PowerupType.LIGHTNING);
-            myPointsValue = 3000;
         }
+        myBrickImageView = createBrick(brickId);
+
     }
 
-    private ImageView createBrick(BrickType type) {
-        Image brickImage = new Image(this.getClass().getClassLoader().getResourceAsStream(type.getBrickFileName()));
+    private ImageView createBrick(int brickId) {
+        if (myBrickType == BrickType.ONE_HIT_REGULAR || myBrickType == BrickType.TWO_HIT_REGULAR || myBrickType == BrickType.THREE_HIT_REGULAR) {
+            myHitsRemaining = brickId;
+        } else {
+            myHitsRemaining = brickId - POWER_BRICKS_POINTS_OFFSET;
+        }
+        Image brickImage = new Image(this.getClass().getClassLoader().getResourceAsStream(myBrickType.getBrickImagePath()));
         ImageView brick = new ImageView(brickImage);
         brick.setFitWidth(BRICK_WIDTH);
         brick.setFitHeight(BRICK_HEIGHT);
+        myPointsValue = myBrickType.getPointsValue();
         return brick;
     }
 
@@ -65,7 +59,7 @@ public class Brick {
             gameScene.getRoot().getChildren().remove(myBrickImageView);
             gameScene.getBricks().remove(this);
 
-            if (myBrickId == 4 || myBrickId == 5 || myBrickId == 6) {
+            if (myBrickType == BrickType.ONE_HIT_POWER || myBrickType == BrickType.TWO_HIT_POWER || myBrickType == BrickType.THREE_HIT_POWER) {
                 myPowerup.setPowerup(this, gameScene);
             }
         }
@@ -80,17 +74,26 @@ public class Brick {
     }
 
     public enum BrickType {
-        ONE_HIT ("brick1.png"),
-        TWO_HIT ("brick2.png"),
-        THREE_HIT ("brick3.png");
+        ONE_HIT_REGULAR ("brick1.png", 500),
+        TWO_HIT_REGULAR ("brick2.png", 1000),
+        THREE_HIT_REGULAR ("brick3.png", 1500),
+        ONE_HIT_POWER ("brick1.png", 2000),
+        TWO_HIT_POWER ("brick2.png", 2500),
+        THREE_HIT_POWER ("brick1.png", 3000);
 
-        private String myAssociatedFileName;
-        BrickType(String fileName) {
-            myAssociatedFileName = fileName;
+        private String myBrickImagePath;
+        private int myPointsValue;
+
+        BrickType(String fileName, int pointsValue) {
+            myBrickImagePath = fileName;
+            myPointsValue = pointsValue;
         }
 
-        private String getBrickFileName() {
-            return myAssociatedFileName;
+        private String getBrickImagePath() {
+            return myBrickImagePath;
+        }
+        private int getPointsValue() {
+            return myPointsValue;
         }
     }
 
