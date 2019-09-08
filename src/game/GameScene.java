@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 public class GameScene {
     public static final int FIRST_ROW_OFFSET = 50;
 
+    private Stage myStageReference;
     private Scene myScene;
     private GameSceneType myGameSceneType;
     private GameSceneType myNextGameSceneType;
@@ -29,7 +31,9 @@ public class GameScene {
     private ArrayList<Powerup> myPresentPowerups = new ArrayList<>();
     private ArrayList<BackgroundStructure> myDeadZones = new ArrayList<>();
 
-    public GameScene(GameSceneType sceneType) {
+    public GameScene(Stage stage, GameSceneType sceneType, GameStatus gameStatus) {
+        myStageReference = stage;
+        myGameStatus = gameStatus;
         myGameSceneType = sceneType;
         if (myGameSceneType == GameSceneType.LEVEL1) {
             myScene = generateLevelScene(GameSceneType.LEVEL2);
@@ -61,6 +65,7 @@ public class GameScene {
         setBackground(myGameSceneType.getBackground());
         Scene scene = new Scene(myRoot, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT);
         setButtonToAdvance(myGameSceneType.getBricksConfigOrButtonText());
+        myRoot.getChildren().add(myGameStatus.getScoreLabelForNonLevel());
         return scene;
     }
 
@@ -69,7 +74,7 @@ public class GameScene {
         button.setLayoutX(GameMain.SCENE_WIDTH / 2 - button.getBoundsInParent().getWidth() / 2);
         button.setLayoutY(GameMain.SCENE_HEIGHT - 70);
         button.setOnAction(e -> {
-            GameMain.resetStage(myNextGameSceneType);
+            GameMain.resetStage(myStageReference, myNextGameSceneType, myGameStatus);
         });
         myRoot.getChildren().add(button);
     }
@@ -81,8 +86,9 @@ public class GameScene {
         myMainCharacter = new Character(myRoot);
         myBall = new Ball(myRoot, myMainCharacter);
         new BackgroundStructure(BackgroundStructure.StructureType.DOOR, myRoot, Optional.empty(), Optional.empty(), Optional.empty());
-        myGameStatus = new GameStatus(myRoot);
         myDeadZones = BackgroundStructure.addDeadZonesToLevel(myGameSceneType, myRoot);
+        myGameStatus.resetLives(myRoot);
+        myRoot.getChildren().add(myGameStatus.getScoreLabelForLevel());
 
         setBackground(myGameSceneType.getBackground());
         Scene scene = new Scene(myRoot, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT);
@@ -141,15 +147,15 @@ public class GameScene {
 
     private void handleKeyInput(KeyEvent e) {
         if (e.getCode() == KeyCode.DIGIT1) {
-            GameMain.resetStage(GameSceneType.LEVEL1);
+            GameMain.resetStage(myStageReference, GameSceneType.LEVEL1, myGameStatus);
         } else if (e.getCode() == KeyCode.DIGIT2) {
-            GameMain.resetStage(GameSceneType.LEVEL2);
+            GameMain.resetStage(myStageReference, GameSceneType.LEVEL2, myGameStatus);
         } else if (e.getCode().isDigitKey()) {
-            GameMain.resetStage(GameSceneType.LEVEL3);
+            GameMain.resetStage(myStageReference, GameSceneType.LEVEL3, myGameStatus);
         } else if (e.getCode() == KeyCode.I) {
-            GameMain.resetStage(GameSceneType.INTRO);
+            GameMain.resetStage(myStageReference, GameSceneType.INTRO, myGameStatus);
         } else if (e.getCode() == KeyCode.W) {
-            GameMain.resetStage(GameSceneType.WIN);
+            GameMain.resetStage(myStageReference, GameSceneType.WIN, myGameStatus);
         } else if (e.getCode() == KeyCode.R) {
             try {
                 myBall.resetBall(myMainCharacter);
@@ -222,19 +228,22 @@ public class GameScene {
 
     public void clearLevel(double elapsedTime) {
         for (int i=0; i<myGameStatus.getLivesRemaining(); i++) {
-            GameMain.increaseScore(2);
+            myGameStatus.increaseScore(2);
+        }
+        for (Powerup powerup : myPresentPowerups) {
+            myRoot.getChildren().remove(powerup);
         }
         myScene.setOnMouseMoved(null);
         myRoot.getChildren().remove(myBall.getBallImageView());
         myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH / 2 - myMainCharacter.getCharacterImageView().getBoundsInLocal().getWidth() / 2);
         myMainCharacter.getCharacterImageView().setY(myMainCharacter.getCharacterImageView().getY() - 100 * elapsedTime);
         if (myMainCharacter.getCharacterImageView().getBoundsInParent().getMaxY() == 0) {
-            GameMain.resetStage(myNextGameSceneType);
+            GameMain.resetStage(myStageReference, myNextGameSceneType, myGameStatus);
         }
     }
 
     public void loseLevel() {
-        GameMain.resetStage(GameSceneType.LOSE);
+        GameMain.resetStage(myStageReference, GameSceneType.LOSE, myGameStatus);
     }
 
     public void handlePowerup(double elapsedTime) {

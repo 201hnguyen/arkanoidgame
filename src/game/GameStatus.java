@@ -1,8 +1,12 @@
 package game;
 
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
 
@@ -16,9 +20,17 @@ public class GameStatus {
 
     private ArrayList<ImageView> myHearts = new ArrayList<>();
     private int myCurrentXCoordinate;
+    private int myScore;
+    private Label myScoreLabel;
 
-    public GameStatus(Pane root) {
+    public GameStatus() {
         myHearts.clear();
+        myCurrentXCoordinate = X_OFFSET;
+        myScore = 0;
+        myScoreLabel = new Label();
+    }
+
+    public void resetLives(Pane root) {
         myCurrentXCoordinate = X_OFFSET;
         for (int i = 0; i < INITIAL_LIVES; i++) {
             addHeartImageView(root);
@@ -57,4 +69,35 @@ public class GameStatus {
     public int getLivesRemaining() {
         return myHearts.size();
     }
+
+    public int getScore(){
+        return myScore;
+    }
+
+    public Label getScoreLabelForLevel() {
+        myScoreLabel.setText("" + myScore);
+        myScoreLabel.setLayoutX(785);
+        myScoreLabel.setLayoutY(7);
+        myScoreLabel.setTextFill(Color.LIGHTGRAY);
+        myScoreLabel.setFont(Font.font("Helvetica", FontWeight.BOLD, 25));
+        return myScoreLabel;
+    }
+
+    public Label getScoreLabelForNonLevel() {
+        myScoreLabel.setLayoutX(500);
+        myScoreLabel.setLayoutY(450);
+        myScoreLabel.setFont(Font.font("Helvetica", FontWeight.BOLD, 40));
+        return myScoreLabel;
+    }
+
+    public void increaseScore(int value) {
+        myScore += value;
+        myScoreLabel.setText("" + myScore);
+    }
+
+    public void decreaseScore(int value) {
+        myScore -= value;
+        myScoreLabel.setText("" + myScore);
+    }
+
 }

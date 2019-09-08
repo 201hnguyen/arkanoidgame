@@ -58,10 +58,10 @@ public class Brick {
     }
 
     public void downsizeBrick(GameScene gameScene) {
-        GameMain.increaseScore(myPointsValue);
+        gameScene.getGameStatus().increaseScore(myPointsValue);
         myHitsRemaining--;
         if (myHitsRemaining == 0) {
-            GameMain.increaseScore(myPointsValue);
+            gameScene.getGameStatus().increaseScore(myPointsValue);
             gameScene.getRoot().getChildren().remove(myBrickImageView);
             gameScene.getBricks().remove(this);
 
