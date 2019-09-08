@@ -38,6 +38,8 @@ public class GameScene {
         } else if (myGameSceneType == GameSceneType.LEVEL3) {
             myScene = generateLevelScene(GameSceneType.WIN);
         } else if (myGameSceneType == GameSceneType.INTRO) {
+            myScene = generateNonLevelScene(GameSceneType.HOW_TO_PLAY);
+        } else if (myGameSceneType == GameSceneType.HOW_TO_PLAY) {
             myScene = generateNonLevelScene(GameSceneType.LEVEL1);
         } else if (myGameSceneType == GameSceneType.WIN) {
             myScene = generateNonLevelScene(GameSceneType.INTRO);
@@ -65,7 +67,7 @@ public class GameScene {
     private void setButtonToAdvance(String buttonText) {
         Button button = new Button(buttonText);
         button.setLayoutX(GameMain.SCENE_WIDTH / 2 - button.getBoundsInParent().getWidth() / 2);
-        button.setLayoutY(GameMain.SCENE_HEIGHT - 100);
+        button.setLayoutY(GameMain.SCENE_HEIGHT - 70);
         button.setOnAction(e -> {
             GameMain.resetStage(myNextGameSceneType);
         });
@@ -286,6 +288,7 @@ public class GameScene {
 
     public enum GameSceneType {
         INTRO ("backgroundintro.jpg", "Start"),
+        HOW_TO_PLAY ("howtoplay.jpg", "Begin game"),
         LEVEL1 ("background1.jpg", "resources/level1.txt"),
         LEVEL2 ("background2.jpg", "resources/level2.txt"),
         LEVEL3 ("background3.jpg", "resources/level3.txt"),
