@@ -33,6 +33,7 @@ public class Ball {
         myBallImageView.setY(myBallImageView.getY() + myDirection[1] * BALL_SPEED * elapsedTime);
         paddleCollisionCheck(gameScene.getMainCharacter());
         wallCollisionCheck(gameScene);
+        deadzoneCollisionCheck(gameScene);
     }
 
     private void paddleCollisionCheck(Character character) {
@@ -62,10 +63,13 @@ public class Ball {
             myDirection[1] *= -1;
         } else if (myBallImageView.getY() >= (GameMain.SCENE_HEIGHT)) {
             gameScene.getGameStatus().decreaseLives(gameScene);
-            if (gameScene.getGameStatus().getLivesRemaining() == 0) {
-                gameScene.loseLevel();
-            } else {
-                resetBall(gameScene.getMainCharacter());
+        }
+    }
+
+    private void deadzoneCollisionCheck(GameScene gameScene) {
+        for (BackgroundStructure deadZone : gameScene.getDeadZones()) {
+            if (myBallImageView.getBoundsInParent().intersects(deadZone.getStructureImageView().getBoundsInParent())) {
+                gameScene.getGameStatus().decreaseLives(gameScene);
             }
         }
     }

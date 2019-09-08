@@ -11,6 +11,8 @@ import javafx.scene.layout.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -26,6 +28,7 @@ public class GameScene {
     private GameStatus myGameStatus;
     private ArrayList<Brick> myBricks = new ArrayList<>();
     private ArrayList<Powerup> myPresentPowerups = new ArrayList<>();
+    private ArrayList<BackgroundStructure> myDeadZones = new ArrayList<>();
 
     public GameScene(GameSceneType sceneType) {
         myGameSceneType = sceneType;
@@ -76,8 +79,9 @@ public class GameScene {
         configureBricks(myGameSceneType.getBricksConfigOrButtonText());
         myMainCharacter = new Character(myRoot);
         myBall = new Ball(myRoot, myMainCharacter);
-        BackgroundStructure door = new BackgroundStructure(BackgroundStructure.StructureType.DOOR, myRoot);
+        new BackgroundStructure(BackgroundStructure.StructureType.DOOR, myRoot, Optional.empty(), Optional.empty(), Optional.empty());
         myGameStatus = new GameStatus(myRoot);
+        myDeadZones = BackgroundStructure.addDeadZonesToLevel(myGameSceneType, myRoot);
 
         setBackground(myGameSceneType.getBackground());
         Scene scene = new Scene(myRoot, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT);
@@ -268,6 +272,10 @@ public class GameScene {
 
     public GameSceneType getGameSceneType() {
         return myGameSceneType;
+    }
+
+    public ArrayList<BackgroundStructure> getDeadZones() {
+        return myDeadZones;
     }
 
     public enum GameSceneType {

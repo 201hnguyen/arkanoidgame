@@ -43,6 +43,11 @@ public class GameStatus {
             gameScene.getRoot().getChildren().remove(myHearts.get(myHearts.size()-1));
             myHearts.remove(myHearts.size() -1);
         }
+        if (gameScene.getGameStatus().getLivesRemaining() == 0) {
+            gameScene.loseLevel();
+        } else {
+            gameScene.getBall().resetBall(gameScene.getMainCharacter());
+        }
     }
 
     public void increaseLives(Pane root) {
