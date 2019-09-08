@@ -47,6 +47,14 @@ public class GameMain extends Application {
 
     public static void resetStage(GameScene.GameSceneType gameSceneType) {
         myCurrentGameScene = new GameScene(gameSceneType);
+        if (myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.INTRO) {
+            score = 0;
+        } else if (myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.WIN || myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LOSE) {
+            scoreLabel.setLayoutX(500);
+            scoreLabel.setLayoutY(450);
+            scoreLabel.setFont(Font.font("Helvetica", FontWeight.BOLD, 40));
+            myCurrentGameScene.getRoot().getChildren().add(scoreLabel);
+        }
         if (myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL1 ||
                 myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL2 ||
                 myCurrentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL3) {

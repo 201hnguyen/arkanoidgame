@@ -64,7 +64,7 @@ public class GameScene {
 
     private void setButtonToAdvance(String buttonText) {
         Button button = new Button(buttonText);
-        button.setLayoutX(GameMain.SCENE_WIDTH / 2 - button.getBoundsInParent().getWidth() / 2); //TODO: Figure out what's going on here
+        button.setLayoutX(GameMain.SCENE_WIDTH / 2 - button.getBoundsInParent().getWidth() / 2);
         button.setLayoutY(GameMain.SCENE_HEIGHT - 100);
         button.setOnAction(e -> {
             GameMain.resetStage(myNextGameSceneType);
@@ -216,7 +216,7 @@ public class GameScene {
 
     public void clearLevel(double elapsedTime) {
         for (int i=0; i<myGameStatus.getLivesRemaining(); i++) {
-            GameMain.increaseScore(10);
+            GameMain.increaseScore(2);
         }
         myScene.setOnMouseMoved(null);
         myRoot.getChildren().remove(myBall.getBallImageView());

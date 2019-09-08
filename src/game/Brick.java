@@ -22,30 +22,30 @@ public class Brick {
         if (myBrickId == 1) {
             myBrickImageView = createBrick(BrickType.ONE_HIT);
             myHitsRemaining = hitsId;
-            myPointsValue = 50;
+            myPointsValue = 500;
         } else if (myBrickId == 2) {
             myBrickImageView = createBrick(BrickType.TWO_HIT);
             myHitsRemaining = hitsId;
-            myPointsValue = 150;
+            myPointsValue = 1500;
         } else if (myBrickId == 3) {
             myBrickImageView = createBrick(BrickType.THREE_HIT);
             myHitsRemaining = hitsId;
-            myPointsValue = 250;
+            myPointsValue = 2500;
         } else if (myBrickId == 4) {
             myBrickImageView = createBrick(BrickType.ONE_HIT);
             myHitsRemaining = hitsId - POWER_BRICKS_ID_OFFSET;
             myPowerup = new Powerup(Powerup.PowerupType.HORN);
-            myPointsValue = 100;
+            myPointsValue = 1000;
         } else if (myBrickId == 5) {
             myBrickImageView = createBrick(BrickType.TWO_HIT);
             myHitsRemaining = hitsId - POWER_BRICKS_ID_OFFSET;
             myPowerup = new Powerup(Powerup.PowerupType.POTION);
-            myPointsValue = 200;
+            myPointsValue = 2000;
         } else if (myBrickId == 6) {
             myBrickImageView = createBrick(BrickType.THREE_HIT);
             myHitsRemaining = hitsId - POWER_BRICKS_ID_OFFSET;
             myPowerup = new Powerup(Powerup.PowerupType.LIGHTNING);
-            myPointsValue = 300;
+            myPointsValue = 3000;
         }
     }
 
