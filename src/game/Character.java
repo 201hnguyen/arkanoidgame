@@ -19,7 +19,7 @@ public class Character {
     private ImageView myDumbledoresArmyImageView;
 
 
-    public Character(Pane root) {
+    public Character() {
         mySingleCharacterImageView = createCharacter(SINGLE_CHARACTER_IMAGE_PATH, SINGLE_CHARACTER_WIDTH);
 
         myDoubleCharacterImageView = createCharacter(DOUBLE_CHARACTER_IMAGE_PATH, DOUBLE_CHARACTER_WIDTH);
@@ -27,7 +27,7 @@ public class Character {
         myDumbledoresArmyImageView = createCharacter(ARMY_CHARACTER_IMAGE_PATH, GameMain.SCENE_WIDTH);
 
         myCurrentCharacterImageView = mySingleCharacterImageView;
-        setCurrentCharacterAsPaddle(root);
+        setCurrentCharacterAsPaddle();
     }
 
     private ImageView createCharacter(String characterImagePath, int characterWidth) {
@@ -38,10 +38,9 @@ public class Character {
         return characterImageView;
     }
 
-    private void setCurrentCharacterAsPaddle(Pane root) {
+    private void setCurrentCharacterAsPaddle() {
         myCurrentCharacterImageView.setX(GameMain.SCENE_WIDTH / 2 - SINGLE_CHARACTER_WIDTH / 2);
         myCurrentCharacterImageView.setY(GameMain.SCENE_HEIGHT - CHARACTER_HEIGHT);
-        root.getChildren().add(myCurrentCharacterImageView);
     }
 
     public void changePosition(int value) {

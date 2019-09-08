@@ -41,7 +41,7 @@ public class Powerup {
         root.getChildren().add(myPowerupImageView);
     }
 
-    public void setPowerupMotion(double elapsedTime, GameScene gameScene) {
+    public void setPowerupMotionToWaitActivation(double elapsedTime, GameScene gameScene) {
         myPowerupImageView.setY(myPowerupImageView.getY() + POWERUP_SPEED * elapsedTime);
         if (myPowerupImageView.getBoundsInParent().intersects(gameScene.getMainCharacter().getCharacterImageView().getBoundsInParent())) {
             gameScene.getRoot().getChildren().remove(myPowerupImageView);

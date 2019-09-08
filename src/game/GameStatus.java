@@ -19,19 +19,24 @@ public class GameStatus {
     public static final int INITIAL_LIVES = 3;
 
     private ArrayList<ImageView> myHearts = new ArrayList<>();
-    private int myCurrentXCoordinate;
+    private int myCurrentXCoordinateForHearts;
     private int myScore;
     private Label myScoreLabel;
 
     public GameStatus() {
-        myHearts.clear();
-        myCurrentXCoordinate = X_OFFSET;
-        myScore = 0;
-        myScoreLabel = new Label();
+        resetGameStatus();
     }
 
-    public void resetLives(Pane root) {
-        myCurrentXCoordinate = X_OFFSET;
+    public void resetGameStatus() {
+        myHearts.clear();
+        myCurrentXCoordinateForHearts = X_OFFSET;
+        myScore=0;
+        myScoreLabel = new Label();
+
+    }
+
+    public void resetLivesAndAddImageViewToRoot(Pane root) {
+        myCurrentXCoordinateForHearts = X_OFFSET;
         for (int i = 0; i < INITIAL_LIVES; i++) {
             addHeartImageView(root);
         }
@@ -43,21 +48,17 @@ public class GameStatus {
         heartImageView.setFitWidth(HEART_WIDTH);
         heartImageView.setFitHeight(HEART_HEIGHT);
         heartImageView.setY(Y_OFFSET);
-        heartImageView.setX(myCurrentXCoordinate);
+        heartImageView.setX(myCurrentXCoordinateForHearts);
         root.getChildren().add(heartImageView);
         myHearts.add(heartImageView);
-        myCurrentXCoordinate += HEART_WIDTH + 5;
+        myCurrentXCoordinateForHearts += HEART_WIDTH + 5;
     }
 
     public void decreaseLives(GameScene gameScene) {
-        myCurrentXCoordinate -= HEART_WIDTH + 5;
+        myCurrentXCoordinateForHearts -= HEART_WIDTH + 5;
         if (myHearts.size() > 0) {
             gameScene.getRoot().getChildren().remove(myHearts.get(myHearts.size()-1));
             myHearts.remove(myHearts.size() -1);
-        }
-        if (gameScene.getGameStatus().getLivesRemaining() == 0) {
-            gameScene.loseLevel();
-        } else {
             gameScene.getBall().resetBall(gameScene.getMainCharacter());
         }
     }
@@ -68,10 +69,6 @@ public class GameStatus {
 
     public int getLivesRemaining() {
         return myHearts.size();
-    }
-
-    public int getScore(){
-        return myScore;
     }
 
     public Label getScoreLabelForLevel() {
@@ -98,6 +95,10 @@ public class GameStatus {
     public void decreaseScore(int value) {
         myScore -= value;
         myScoreLabel.setText("" + myScore);
+    }
+
+    public int getRemainingLives() {
+        return myHearts.size();
     }
 
 }

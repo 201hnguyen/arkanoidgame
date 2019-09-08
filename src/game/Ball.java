@@ -13,12 +13,11 @@ public class Ball {
     private ImageView myBallImageView;
 
 
-    public Ball(Pane root, Character character) {
+    public Ball(Character character) {
         Image ballImage =  new Image(this.getClass().getClassLoader().getResourceAsStream(BALL_IMAGE));
         myBallImageView = new ImageView(ballImage);
         myBallImageView.setFitHeight(BALL_SIZE);
         myBallImageView.setFitWidth(BALL_SIZE);
-        root.getChildren().add(myBallImageView);
         resetBall(character);
     }
 

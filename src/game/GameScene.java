@@ -6,7 +6,12 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -18,6 +23,7 @@ import java.util.stream.Stream;
 
 public class GameScene {
     public static final int FIRST_ROW_OFFSET = 50;
+    public static final int CHARACTER_FLOAT_SPEED = 200;
 
     private Stage myStageReference;
     private Scene myScene;
@@ -35,37 +41,41 @@ public class GameScene {
         myStageReference = stage;
         myGameStatus = gameStatus;
         myGameSceneType = sceneType;
-        if (myGameSceneType == GameSceneType.LEVEL1) {
-            myScene = generateLevelScene(GameSceneType.LEVEL2);
-        } else if (myGameSceneType == GameSceneType.LEVEL2) {
-            myScene = generateLevelScene(GameSceneType.LEVEL3);
-        } else if (myGameSceneType == GameSceneType.LEVEL3) {
-            myScene = generateLevelScene(GameSceneType.WIN);
-        } else if (myGameSceneType == GameSceneType.INTRO) {
+
+        if (myGameSceneType == GameSceneType.INTRO) {
             myScene = generateNonLevelScene(GameSceneType.HOW_TO_PLAY);
+            myGameStatus.resetGameStatus();
+
         } else if (myGameSceneType == GameSceneType.HOW_TO_PLAY) {
             myScene = generateNonLevelScene(GameSceneType.LEVEL1);
+
+        } else if (myGameSceneType == GameSceneType.LEVEL1) {
+            myScene = generateLevelScene(GameSceneType.LEVEL2);
+
+        } else if (myGameSceneType == GameSceneType.LEVEL2) {
+            myScene = generateLevelScene(GameSceneType.LEVEL3);
+
+        } else if (myGameSceneType == GameSceneType.LEVEL3) {
+            myScene = generateLevelScene(GameSceneType.WIN);
+
         } else if (myGameSceneType == GameSceneType.WIN) {
             myScene = generateNonLevelScene(GameSceneType.INTRO);
+
         } else if (myGameSceneType == GameSceneType.LOSE) {
             myScene = generateNonLevelScene(GameSceneType.INTRO);
         }
-        myScene.setOnKeyPressed(e -> {
-            try {
-                handleKeyInput(e);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+        myScene.setOnKeyPressed(e -> handleKeyInput(e));
     }
 
     private Scene generateNonLevelScene(GameSceneType nextGameSceneType) {
         myRoot = new Pane();
         myNextGameSceneType = nextGameSceneType;
-        setBackground(myGameSceneType.getBackground());
+        setBackground(myGameSceneType.getBackgroundPath());
         Scene scene = new Scene(myRoot, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT);
         setButtonToAdvance(myGameSceneType.getBricksConfigOrButtonText());
-        myRoot.getChildren().add(myGameStatus.getScoreLabelForNonLevel());
+        if (myGameSceneType != GameSceneType.INTRO) {
+            myRoot.getChildren().add(myGameStatus.getScoreLabelForNonLevel());
+        }
         return scene;
     }
 
@@ -83,14 +93,18 @@ public class GameScene {
         myRoot = new Pane();
         myNextGameSceneType = nextGameSceneType;
         configureBricks(myGameSceneType.getBricksConfigOrButtonText());
-        myMainCharacter = new Character(myRoot);
-        myBall = new Ball(myRoot, myMainCharacter);
-        new BackgroundStructure(BackgroundStructure.StructureType.DOOR, myRoot, Optional.empty(), Optional.empty(), Optional.empty());
-        myDeadZones = BackgroundStructure.addDeadZonesToLevel(myGameSceneType, myRoot);
-        myGameStatus.resetLives(myRoot);
-        myRoot.getChildren().add(myGameStatus.getScoreLabelForLevel());
+        myMainCharacter = new Character();
+        myBall = new Ball(myMainCharacter);
+        BackgroundStructure door = new BackgroundStructure(BackgroundStructure.StructureType.DOOR, Optional.empty(), Optional.empty(), Optional.empty());
 
-        setBackground(myGameSceneType.getBackground());
+        myRoot.getChildren().add(myMainCharacter.getCharacterImageView());
+        myRoot.getChildren().add(myBall.getBallImageView());
+        myRoot.getChildren().add(door.getStructureImageView());
+        myRoot.getChildren().add(myGameStatus.getScoreLabelForLevel());
+        addDeadZonesToLevel();
+        myGameStatus.resetLivesAndAddImageViewToRoot(myRoot);
+
+        setBackground(myGameSceneType.getBackgroundPath());
         Scene scene = new Scene(myRoot, GameMain.SCENE_WIDTH, GameMain.SCENE_HEIGHT);
         scene.setOnMouseMoved(e -> myMainCharacter.movePaddleOnMouseInput(e.getX()));
         return scene;
@@ -129,6 +143,30 @@ public class GameScene {
         }
     }
 
+    private void addDeadZonesToLevel() {
+        BackgroundStructure deadZoneOne = new BackgroundStructure(BackgroundStructure.StructureType.TEETH,
+                Optional.of(BackgroundStructure.RIGHT_WALL_COORDINATE_FOR_TEETH), Optional.of(200), Optional.of(0));
+        BackgroundStructure deadZoneTwo = new BackgroundStructure(BackgroundStructure.StructureType.TEETH,
+                Optional.of(0), Optional.of(450), Optional.of(180));
+        BackgroundStructure deadZoneThree = new BackgroundStructure(BackgroundStructure.StructureType.TEETH,
+                Optional.of(BackgroundStructure.RIGHT_WALL_COORDINATE_FOR_TEETH), Optional.of(200), Optional.of(0));
+        BackgroundStructure deadZoneFour = new BackgroundStructure(BackgroundStructure.StructureType.TEETH,
+                Optional.of(0), Optional.of(100), Optional.of(180));
+
+        myDeadZones.add(deadZoneOne);
+        if (myGameSceneType == GameScene.GameSceneType.LEVEL2) {
+            myDeadZones.add(deadZoneTwo);
+        } else if (myGameSceneType == GameScene.GameSceneType.LEVEL3) {
+            myDeadZones.add(deadZoneTwo);
+            myDeadZones.add(deadZoneThree);
+            myDeadZones.add(deadZoneFour);
+        }
+
+        for (BackgroundStructure deadZone : myDeadZones) {
+            myRoot.getChildren().add(deadZone.getStructureImageView());
+        }
+    }
+
     public void reconfigureBricksBasedOnHits() {
         Brick brickToDownsize = null;
         double[] brickToDownsizeCoordinates = {0,0};
@@ -143,6 +181,14 @@ public class GameScene {
             myBall.reflectBall(brickToDownsize);
             brickToDownsize.downsizeBrick(this);
         }
+    }
+
+    private void setBackground(String backgroundPath) {
+        Image imageForBackground = new Image(this.getClass().getClassLoader().getResourceAsStream(backgroundPath));
+        BackgroundImage backgroundImage = new BackgroundImage(imageForBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+        Background background = new Background(backgroundImage);
+        myRoot.setBackground(background);
     }
 
     private void handleKeyInput(KeyEvent e) {
@@ -174,6 +220,12 @@ public class GameScene {
             } catch (NullPointerException ex) {
                 System.out.println("Cannot create army when not in a level");
             }
+        } else if (e.getCode() == KeyCode.S) {
+            try {
+                myMainCharacter.changeCharacter(myMainCharacter.getSingleCharacterImageView(), myRoot);
+            } catch (NullPointerException ex) {
+                System.out.println("Cannot create single character when not in a level");
+            }
         } else if (e.getCode() == KeyCode.B) {
             myRoot.setEffect(new GaussianBlur(100));
         } else if (e.getCode() == KeyCode.V) {
@@ -183,12 +235,6 @@ public class GameScene {
                 clearRow();
             } catch (NullPointerException ex) {
                 System.out.println("Cannot clear brick when not in a level");
-            }
-        } else if (e.getCode() == KeyCode.S) {
-            try {
-                myMainCharacter.changeCharacter(myMainCharacter.getSingleCharacterImageView(), myRoot);
-            } catch (NullPointerException ex) {
-                System.out.println("Cannot create single character when not in a level");
             }
         } else if (e.getCode() == KeyCode.UP) {
             myMainCharacter.changePosition(10);
@@ -218,14 +264,6 @@ public class GameScene {
         }
     }
 
-    private void setBackground(String backgroundPath) {
-        Image imageForBackground = new Image(this.getClass().getClassLoader().getResourceAsStream(backgroundPath));
-        BackgroundImage backgroundImage = new BackgroundImage(imageForBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-        Background background = new Background(backgroundImage);
-        myRoot.setBackground(background);
-    }
-
     public void clearLevel(double elapsedTime) {
         for (int i=0; i<myGameStatus.getLivesRemaining(); i++) {
             myGameStatus.increaseScore(2);
@@ -236,7 +274,7 @@ public class GameScene {
         myScene.setOnMouseMoved(null);
         myRoot.getChildren().remove(myBall.getBallImageView());
         myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH / 2 - myMainCharacter.getCharacterImageView().getBoundsInLocal().getWidth() / 2);
-        myMainCharacter.getCharacterImageView().setY(myMainCharacter.getCharacterImageView().getY() - 100 * elapsedTime);
+        myMainCharacter.getCharacterImageView().setY(myMainCharacter.getCharacterImageView().getY() - CHARACTER_FLOAT_SPEED * elapsedTime);
         if (myMainCharacter.getCharacterImageView().getBoundsInParent().getMaxY() == 0) {
             GameMain.resetStage(myStageReference, myNextGameSceneType, myGameStatus);
         }
@@ -246,10 +284,14 @@ public class GameScene {
         GameMain.resetStage(myStageReference, GameSceneType.LOSE, myGameStatus);
     }
 
+    public void addToPresentPowerups(Powerup powerup) {
+        myPresentPowerups.add(powerup);
+    }
+
     public void handlePowerup(double elapsedTime) {
         ArrayList<Powerup> activatedPowerup = new ArrayList<>();
         for (Powerup powerup : myPresentPowerups) {
-            powerup.setPowerupMotion(elapsedTime, this);
+            powerup.setPowerupMotionToWaitActivation(elapsedTime, this);
             if (powerup.powerupIsActivated()) {
                 activatedPowerup.add(powerup);
             }
@@ -257,10 +299,6 @@ public class GameScene {
         for (Powerup powerup : activatedPowerup) {
             myPresentPowerups.remove(powerup);
         }
-    }
-
-    public void addToPresentPowerups(Powerup powerup) {
-        myPresentPowerups.add(powerup);
     }
 
     public Scene getScene() {
@@ -304,12 +342,12 @@ public class GameScene {
         LOSE ("backgroundlose.jpg", "Try Again"),
         WIN ("backgroundwin.jpg", "Play again");
 
-        private String myBackground;
+        private String myBackgroundPath;
         private String myBricksConfigOrButtonText;
 
 
-        GameSceneType(String background, String bricksConfigOrButtonText) {
-            myBackground = background;
+        GameSceneType(String backgroundPath, String bricksConfigOrButtonText) {
+            myBackgroundPath = backgroundPath;
             myBricksConfigOrButtonText = bricksConfigOrButtonText;
         }
 
@@ -317,8 +355,8 @@ public class GameScene {
             return myBricksConfigOrButtonText;
         }
 
-        private String getBackground() {
-            return myBackground;
+        private String getBackgroundPath() {
+            return myBackgroundPath;
         }
     }
 }
