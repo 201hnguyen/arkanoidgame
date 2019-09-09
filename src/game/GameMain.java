@@ -27,6 +27,14 @@ public class GameMain extends Application {
         setAnimation();
     }
 
+    /**
+     * Resets the stage; useful for starting the game and advancing or losing a level. Often called upon by GameScene
+     * when a level is lost
+     * @param stage A reference to the stage in order to reset the scene upon
+     * @param gameSceneType The type of scene that the stage should be reset to
+     * @param gameStatus The current gameStatus, whose score feature must be passed on to the next level in order to be
+     *                   kept track of and displayed.
+     */
     public static void resetStage(Stage stage, GameScene.GameSceneType gameSceneType, GameStatus gameStatus) {
         currentGameScene = new GameScene(stage, gameSceneType, gameStatus);
         stage.setScene(currentGameScene.getScene());
@@ -35,7 +43,7 @@ public class GameMain extends Application {
         stage.show();
     }
 
-    public static void setAnimation() {
+    private static void setAnimation() {
         var frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> {
             if (currentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL1 ||
                     currentGameScene.getGameSceneType() == GameScene.GameSceneType.LEVEL2 ||
@@ -53,7 +61,7 @@ public class GameMain extends Application {
     private static void stepThroughLevel(GameScene gameScene, double elapsedTime) {
         if (gameScene.getBricks().size() == 0) {
             gameScene.clearLevel(elapsedTime);
-        } else if (gameScene.getGameStatus().getRemainingLives() == 0) {
+        } else if (gameScene.getGameStatus().getLivesRemaining() == 0) {
             gameScene.loseLevel();
         } else {
             gameScene.getBall().setBallMotion(elapsedTime, gameScene);

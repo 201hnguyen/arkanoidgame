@@ -37,6 +37,22 @@ public class GameScene {
     private ArrayList<Powerup> myPresentPowerups = new ArrayList<>();
     private ArrayList<BackgroundStructure> myDeadZones = new ArrayList<>();
 
+    /**
+     * The scene of the game, which holds all of the characters, buttons stage reference, ball, bricks, and powerup, and dead
+     * zones needed in order for the game to function. Each game scene is a new scene in the game with specific properties
+     * that depend on whether or not they are level game scenes or non-level game scenes. Assumes that all the files for
+     * the background, "background1.jpg," "background2.jpg," "background3.jpg," "backgroundintro.jpg", "backgroundlose.jpg,"
+     * "backgroundwin.jpg," and "howtoplay.jpg" as well as the brick configuration files, "level1.txt", "level2.txt, and
+     * "level3.txt" are all in the resources folder. This object holds scene level properties
+     * such as all the bricks, etc. and can be used for things such as generating the scene for a new level or non-level,
+     * configuring bricks, handling cheat key inputs, handling powerups, advancing to the next level or a lose scene, etc.
+     * @param stage the stage for which the scene will be kept on; kept as a reference in order to reset it when a new
+     *              scene is established
+     * @param sceneType the sceneType to be set, depending on whether the scene is the intro, how to play, one of the levels,
+     *                  the win, or the lose scene
+     * @param gameStatus the current status of the game, which allows the current scene to preserve the player's score
+     *                   previous levels
+     */
     public GameScene(Stage stage, GameSceneType sceneType, GameStatus gameStatus) {
         myStageReference = stage;
         myGameStatus = gameStatus;
@@ -167,17 +183,18 @@ public class GameScene {
         }
     }
 
+    /**
+     * Identifies the brick tht gets hit and downsizes that brick (or destroy it, if the number of hits remaining
+     * in that brick is 0)
+     */
     public void reconfigureBricksBasedOnHits() {
         Brick brickToDownsize = null;
-        double[] brickToDownsizeCoordinates = {0,0};
         for (Brick brick : myBricks) {
             if (myBall.getBallImageView().getBoundsInParent().intersects(brick.getBrickImageView().getBoundsInParent())) {
                 brickToDownsize = brick;
             }
         }
         if (brickToDownsize != null) {
-            brickToDownsizeCoordinates[0] = brickToDownsize.getBrickImageView().getBoundsInParent().getCenterX();
-            brickToDownsizeCoordinates[1] = brickToDownsize.getBrickImageView().getBoundsInParent().getCenterY();
             myBall.reflectBall(brickToDownsize);
             brickToDownsize.downsizeBrick(this);
         }
@@ -237,9 +254,9 @@ public class GameScene {
                 System.out.println("Cannot clear brick when not in a level");
             }
         } else if (e.getCode() == KeyCode.UP) {
-            myMainCharacter.changePosition(10);
+            myMainCharacter.changeYPosition(10);
         } else if (e.getCode() == KeyCode.DOWN) {
-            myMainCharacter.changePosition(-10);
+            myMainCharacter.changeYPosition(-10);
         } else {
             return;
         }
@@ -264,30 +281,57 @@ public class GameScene {
         }
     }
 
+    /**
+     * Used to clear the level once all the bricks have been cleared and there are no bricks left;
+     * if the user have lives remaining, they will get additional points added to their score.
+     * @param elapsedTime
+     */
     public void clearLevel(double elapsedTime) {
         for (int i=0; i<myGameStatus.getLivesRemaining(); i++) {
             myGameStatus.increaseScore(2);
         }
+        ArrayList<Powerup> powerupsToRemove = new ArrayList<>();
         for (Powerup powerup : myPresentPowerups) {
-            myRoot.getChildren().remove(powerup);
+            powerupsToRemove.add(powerup);
         }
+
+        for (Powerup powerup : powerupsToRemove) {
+            myRoot.getChildren().remove(powerup.getPowerupImageView());
+            myPresentPowerups.remove(powerup);
+        }
+
         myScene.setOnMouseMoved(null);
         myRoot.getChildren().remove(myBall.getBallImageView());
         myMainCharacter.getCharacterImageView().setX(GameMain.SCENE_WIDTH / 2 - myMainCharacter.getCharacterImageView().getBoundsInLocal().getWidth() / 2);
         myMainCharacter.getCharacterImageView().setY(myMainCharacter.getCharacterImageView().getY() - CHARACTER_FLOAT_SPEED * elapsedTime);
-        if (myMainCharacter.getCharacterImageView().getBoundsInParent().getMaxY() == 0) {
+
+        if (myMainCharacter.getCharacterImageView().getBoundsInParent().getMaxY() <= 0) {
             GameMain.resetStage(myStageReference, myNextGameSceneType, myGameStatus);
         }
     }
 
+    /**
+     * Resets the stage to the lose scene; used for when the player has no lives remaining
+     */
     public void loseLevel() {
         GameMain.resetStage(myStageReference, GameSceneType.LOSE, myGameStatus);
     }
 
+    /**
+     * Adds the powerup that has just been created to the list of present power ups that are active in the game in order to
+     * keep track of their movements throughout the game and activate them when they hit the paddle
+     * @param powerup the power up that has just been revealed by destroying a brick
+     */
     public void addToPresentPowerups(Powerup powerup) {
         myPresentPowerups.add(powerup);
     }
 
+    /**
+     * Handles the motion of the power up as they float down to the paddle and remove them
+     * from the screen if they have been activated
+     * @param elapsedTime the time elapsed, used to calculate the position of the powerup as the frame changes
+     *                    adn the powerup is supposed to float downward
+     */
     public void handlePowerup(double elapsedTime) {
         ArrayList<Powerup> activatedPowerup = new ArrayList<>();
         for (Powerup powerup : myPresentPowerups) {
@@ -301,38 +345,80 @@ public class GameScene {
         }
     }
 
+    /**
+     * Gets the actual scene that is created in this game scene in order to set the stage
+     * @return the javafx scene created as part of GameScene
+     */
     public Scene getScene() {
         return myScene;
     }
 
+    /**
+     * Gets the root that holds together all the elements in the scene/the GameScene; useful for
+     * other classes to add to/remove from the children of the roots as elements are activated or deleted
+     * @return the Pane serves as the root that holds together the elements in the scene
+     */
     public Pane getRoot() {
         return myRoot;
     }
 
+    /**
+     * Gets the bricks still present in the scene; useful for removing bricks and checking whether
+     * or not to clear level
+     * @return the ArrayList of Bricks objects that contain all the current bricks in the scene
+     */
     public ArrayList<Brick> getBricks() {
         return myBricks;
     }
 
+    /**
+     * Gets the character/paddle; useful for looking at its intersections with other objects such as the ball and
+     * as well as for etting its qualities
+     * @return the Character object that serves as the paddle for the game
+     */
     public Character getMainCharacter() {
         return myMainCharacter;
     }
 
+    /**
+     * Gets the ball in the GameScene, useful for setting and looking at the ball's motion
+     * @return the scene's Ball object
+     */
     public Ball getBall() {
         return myBall;
     }
 
+    /**
+     * Gets the current status of the game; useful for adding to/subtracting scores and/or lives
+     * @return the current GameStatus object in the GameScene
+     */
     public GameStatus getGameStatus() {
         return myGameStatus;
     }
 
+    /**
+     * Gets the type of the game scene; useful for determining which actions to take based on certain game scene types
+     * (whether they are level game scenes or non-level game scenes)
+     * @return the type of the game scene, which can either be intro, how to play, win, lose, or one of the levels
+     */
     public GameSceneType getGameSceneType() {
         return myGameSceneType;
     }
 
+    /**
+     * Gets the dead zones currently present in the game, useful for determining when the ball hits the deadzone
+     * in order to take the appropriate actions
+     * @return an ArrayList of BackgroundStructure objects representing the teeth/dead zones currently present in the game
+     */
     public ArrayList<BackgroundStructure> getDeadZones() {
         return myDeadZones;
     }
 
+    /**
+     * Used to specify what kind of game scene is being created and how it should function;
+     * also, this provides associated value for the background path for the scene as well as the
+     * brick configuration if the scene is a level scene or the button text if the scene is a non-level scene.
+     * */
     public enum GameSceneType {
         INTRO ("backgroundintro.jpg", "Start"),
         HOW_TO_PLAY ("howtoplay.jpg", "Begin game"),

@@ -15,6 +15,16 @@ public class Brick {
     private int myRow;
     private int myPointsValue;
 
+    /**
+     * The bricks that create the barriers of which the ball need to clear in order to advance to the next level.
+     * Assumes that "brick1.png," "brick2.png," and "brick3.png" exists in the resource folder. For example, this class
+     * is used to downsize the brick when the ball hits it and to get the row needed for destroying the brick, as well
+     * as for holding powerups associated with each brick. There are six brick types currently supported; the types depend
+     * on how many hits it takes to break (1 & 4 take 1 hit to break, 2 & 5 take 2 hits, 3 & 6 take 3 hits), as well as
+     * whether or not they have powers (4, 5, and 6) do. This will determine their points value.
+     * @param brickId
+     * @param row
+     */
     public Brick(int brickId, int row) {
         myRow = row;
         if (brickId == 1) {
@@ -51,6 +61,13 @@ public class Brick {
         return brick;
     }
 
+    /**
+     * Decreases the amount of hits needed to break the bricks. This is used when the ball comes in contact with the brick.
+     * If the hits remaining is zero, then the bricks will be destroyed and will disappear from the game scene. If the
+     * brick has a power up, upon destruction, the power up will be activated.
+     * @param gameScene the current GameScene for which the brick is a part of; used for removing the brick from
+     *                  the gameScene's collection of bricks, for alternating the score based on the brick hit, etc.
+     */
     public void downsizeBrick(GameScene gameScene) {
         gameScene.getGameStatus().increaseScore(myPointsValue);
         myHitsRemaining--;
@@ -65,14 +82,27 @@ public class Brick {
         }
     }
 
+    /**
+     * Gets the ImageView representation of the current brick; used for adding it to the root of the scene.
+     * @return the ImageView representation of the current brick
+     */
     public ImageView getBrickImageView() {
         return myBrickImageView;
     }
 
+    /**
+     * Gets the brick's row, useful for when trying to determine which row is the lowest to delete upon
+     * pressing the C key
+     * @return the row that the brick is on
+     */
     public int getRow() {
         return myRow;
     }
 
+    /**
+     * Used to specify the types of bricks allowed in the game, the paths to their images to be used, and
+     * the points value of each of the bricks.
+     */
     public enum BrickType {
         ONE_HIT_REGULAR ("brick1.png", 500),
         TWO_HIT_REGULAR ("brick2.png", 1000),
