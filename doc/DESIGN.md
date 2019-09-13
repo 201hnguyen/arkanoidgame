@@ -44,8 +44,8 @@ are not key elements in the game, but putting all the details of setting them up
 crowd the class. Now, knowing what I know about design, I would have made the class more active my moving the dead-zone 
 handling to this class rather than keeping it in the GameScene class. 
 
-**The Powerup class:** responsible for managing individual power-ups in the game (managing all present power-ups as a 
-). On an individual level, this means revealing itself, floating down the screen, and activating itself at the appropriate
+**The Powerup class:** responsible for managing individual power-ups in the game. On an individual level, this means 
+revealing itself, floating down the screen, and activating itself at the appropriate
 moment. The powerup class interacts with the GameScene and GameStatus class in order to alter the status of the game when
 it is activated (e.g., add an extra life). It also interacts with the Character class to determine when it has hit the 
 paddle, which prompts activation. 
