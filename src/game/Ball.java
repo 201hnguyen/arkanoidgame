@@ -51,17 +51,13 @@ public class Ball {
     public void setBallMotion(double elapsedTime, GameScene gameScene) {
         myBallImageView.setX(myBallImageView.getX() + myDirection[0] * BALL_SPEED * elapsedTime);
         myBallImageView.setY(myBallImageView.getY() + myDirection[1] * BALL_SPEED * elapsedTime);
-        paddleCollisionCheck(gameScene.getMainCharacter());
+        if (gameScene.getMainCharacter().detectBallCollision(this.getBallImageView().getBoundsInParent())) {
+            reflectBallOffOfPaddle(gameScene.getMainCharacter().getCharacterImageView());
+        }
         wallCollisionCheck(gameScene);
         deadzoneCollisionCheck(gameScene);
     }
 
-    private void paddleCollisionCheck(Character character) {
-        if (myBallImageView.getBoundsInParent().intersects(character.getCharacterImageView().getBoundsInParent()) &&
-                myBallImageView.getBoundsInParent().getMaxY() <= character.getCharacterImageView().getBoundsInParent().getMinY()) {
-            character.reflectBall(this);
-        }
-    }
 
     private void wallCollisionCheck(GameScene gameScene) {
         if (myBallImageView.getX() <= 0 || myBallImageView.getX() >= GameMain.SCENE_WIDTH - myBallImageView.getBoundsInLocal().getWidth()) {
@@ -94,14 +90,29 @@ public class Ball {
         }
     }
 
+    public void reflectBallOffOfPaddle(ImageView characterImageView) {
+         if (myDirection[0] == 0) {
+                myDirection[0] = -1;
+            }
+         if (myBallImageView.getBoundsInParent().getCenterX() <= characterImageView.getBoundsInParent().getCenterX() - Character.THIRD_DIVISION) {
+                myDirection[0] = -1;
+                myDirection[1] = -1;
+         } else if (myBallImageView.getBoundsInParent().getCenterX() >= characterImageView.getBoundsInParent().getCenterX() + Character.THIRD_DIVISION) {
+                myDirection[0] = 1;
+                myDirection[1] = -1;
+         } else {
+                myDirection[1] *= -1;
+         }
+    }
+
     /**
-     * Relfects the ball off of the brick it hits; if the ball hits the brick in the corner,
+     * Reflects the ball off of the brick it hits; if the ball hits the brick in the corner,
      * then both the X and Y direction are reflected; if the ball hits the brick in from the top
      * or bottom, the the Y direction is reflected; if the ball hits the brick from the sides,
      * then the X direction is reflected.
      * @param brickToDownsize the brick that the ball has hit and will have to reflect off of
      */
-    public void reflectBall(Brick brickToDownsize) {
+    public void reflectBallOffOfBricks(Brick brickToDownsize) {
         boolean ballComesFromTop = myBallImageView.getBoundsInParent().getCenterY() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinY();
         boolean ballComesFromBottom = myBallImageView.getBoundsInParent().getCenterY() >= brickToDownsize.getBrickImageView().getBoundsInParent().getMaxY();
         boolean ballComesFromLeft = myBallImageView.getBoundsInParent().getCenterX() <= brickToDownsize.getBrickImageView().getBoundsInParent().getMinX();

@@ -1,5 +1,35 @@
+/*
+Code Masterpiece comments: the purpose of this class is to act as the paddle in the game; this includes implementing the
+functionality related to the paddle's movements, ball collision, appearance, etc. This class is one of the better-designed
+classes from the beginning, and have been slightly improved upon by refractoring for various reasons:
+1) Global constants and instance variables, as well as method names, are clear and easy to understand. All numbers used
+more than once are encapsulated in a global constant, resulting in no "magic numbers" throughout the code.
+2) There are few duplication in the class
+3) Comments that mask code smells are avoided by using private helper methods throughout the class. For example,
+in the constructor, `setCurrentCharacterAsPaddle` is an example of using a method as a way to replace commenting,
+which makes the code messy and hard to maintain for the future.
+4) The class contributes meaningfully to the project without trying to do too much. It holds the information of all the
+possible ImageViews it can have; it can control its own motion and blur itself upon cheat keys or dead zones activation;
+it can check its position relative to the ball in order to allow for a bounce off; it can change its ImageView when a
+power-up or cheat key is pressed. All of the methods in this class, thus, deal primarily with objects of the class itself;
+these methods do not overreach into other classes/objects and attempt to do too much in terms of modifying those objects.
+5) Each method is short and concise, the principle of shy code is also embraced. For example, look at any of the parameters
+in each of these method, there are no more parameters than necessary; the code is not dragging in other pieces of code
+too much in order to do its work.
+6) The principle of DRY code is embraced; for example, createCharacter is refractored into a method in order to keep
+all the knowledge of creating the character itself in one place, and at a high-level abstraction, the constructor does
+not need to know all the details about how the ImageView is set up.
+7) Previously, the reflectBall method was in this class; however, this was refractored and extracted to belong in the
+Ball class, as it had too many elements that relate to the Ball and therefore should be long in that class. In addition,
+that method also had the power to directly change the position of the ball; because of that, allowing the Ball class to have
+full control of that class rather than taking that power and putting it in this class is a better design. However, the
+checking of the collision with the ball is moved to this class because this is something that the paddle can be
+responsible for.
+
+ */
 package game;
 
+import javafx.geometry.Bounds;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,6 +40,7 @@ public class Character {
     public static final int SINGLE_CHARACTER_WIDTH = 200;
     public static final int DOUBLE_CHARACTER_WIDTH = 350;
     public static final int THIRD_DIVISION = 50;
+    public static final int BLUR_RADIUS = 100;
     public static final String SINGLE_CHARACTER_IMAGE_PATH = "charactersingle.png";
     public static final String DOUBLE_CHARACTER_IMAGE_PATH = "characterdouble.png";
     public static final String ARMY_CHARACTER_IMAGE_PATH = "characterarmy.png";
@@ -24,17 +55,16 @@ public class Character {
      * Used as the paddle in the game to stop the ball from falling off the bottom edge of the screen. Assumes that
      * "charactersingle.png," "characterdouble.png," and "characterarmy.png" exists in the resource folder. Upon creation,
      * the single character ImageView, double character ImageView, and army ImageView are all created to allow for
-     * a smoother transition when the characters are switched upon powerup or cheat key activation. The paddle's abilities
-     * include bouncing the ball differently depending on where it is hit, move in the Y direction as well as the standard X
-     * direction, switch out characters, and become blurry when a dead zone is hit. Visibly, within the game, the paddle
-     * can also shoot lightning upon a powerup, but the method for shooting lightning is placed within the powerup Class
-     * for consistency purpose.
+     * a smoother transition when the characters are switched upon power-up or cheat key activation. The paddle's abilities
+     * include move in the Y direction as well as the standard X direction, switch out characters, and become blurry
+     * when a dead zone is hit. Visibly, within the game, the paddle can also bounce the ball differently depending on
+     * where it is hit and can shoot lightning on a power-up activation, but the method for shooting lightning is placed within
+     * the power-up Class and the method for reflecting the Ball is placed in the Ball class for internal design consistency purpose.
+     *
      */
     public Character() {
         mySingleCharacterImageView = createCharacter(SINGLE_CHARACTER_IMAGE_PATH, SINGLE_CHARACTER_WIDTH);
-
         myDoubleCharacterImageView = createCharacter(DOUBLE_CHARACTER_IMAGE_PATH, DOUBLE_CHARACTER_WIDTH);
-
         myDumbledoresArmyImageView = createCharacter(ARMY_CHARACTER_IMAGE_PATH, GameMain.SCENE_WIDTH);
 
         myBlurOn = false;
@@ -42,28 +72,16 @@ public class Character {
         setCurrentCharacterAsPaddle();
     }
 
-    private ImageView createCharacter(String characterImagePath, int characterWidth) {
-        Image image = new Image(this.getClass().getClassLoader().getResourceAsStream(characterImagePath));
-        ImageView characterImageView = new ImageView(image);
-        characterImageView.setFitWidth(characterWidth);
-        characterImageView.setFitHeight(CHARACTER_HEIGHT);
-        return characterImageView;
-    }
-
-    private void setCurrentCharacterAsPaddle() {
-        myCurrentCharacterImageView.setX(GameMain.SCENE_WIDTH / 2 - SINGLE_CHARACTER_WIDTH / 2);
-        myCurrentCharacterImageView.setY(GameMain.SCENE_HEIGHT - CHARACTER_HEIGHT);
-    }
-
     /**
      * One of the paddle's abilities, which allows it to change Y position if the player presses the UP or DOWN key.
-     * If the paddle hits the bottom of the screen, the DOWN button will no longer work.
+     * If the paddle hits the bottom of the screen, the DOWN button will be disabled.
      * @param value the value for which the paddle will move in the Y direction; can be positive or negative for up or down.
      */
     public void changeYPosition(int value) {
         myCurrentCharacterImageView.setY(myCurrentCharacterImageView.getY() - value);
-        if (myCurrentCharacterImageView.getY() >= GameMain.SCENE_HEIGHT - myCurrentCharacterImageView.getFitHeight()) {
-            myCurrentCharacterImageView.setY(GameMain.SCENE_HEIGHT - myCurrentCharacterImageView.getFitHeight());
+        double maximumYForScene = GameMain.SCENE_HEIGHT - myCurrentCharacterImageView.getFitHeight();
+        if (myCurrentCharacterImageView.getY() >= maximumYForScene) {
+            myCurrentCharacterImageView.setY(maximumYForScene);
         }
     }
 
@@ -74,19 +92,19 @@ public class Character {
      * @param root the root of the current GameScene, used to add in the new ImageView of the character.
      */
     public void changeCharacter(ImageView desiredCharacterImageView, Pane root) {
-        double x = myCurrentCharacterImageView.getX();
-        double y = myCurrentCharacterImageView.getY();
+        double currentXCoordinate = myCurrentCharacterImageView.getX();
+        double currentYCoordinate = myCurrentCharacterImageView.getY();
         root.getChildren().remove(myCurrentCharacterImageView);
 
         myCurrentCharacterImageView = desiredCharacterImageView;
         if (myCurrentCharacterImageView == myDumbledoresArmyImageView) {
             myCurrentCharacterImageView.setX(0);
         } else {
-            myCurrentCharacterImageView.setX(x);
+            myCurrentCharacterImageView.setX(currentXCoordinate);
         }
-        myCurrentCharacterImageView.setY(y);
+        myCurrentCharacterImageView.setY(currentYCoordinate);
         if (myBlurOn) {
-            blurCharacter();
+            blurCharacter(BLUR_RADIUS);
         }
         root.getChildren().add(myCurrentCharacterImageView);
     }
@@ -109,42 +127,23 @@ public class Character {
     public void setBlur() {
         if (!myBlurOn) {
             myBlurOn = true;
-            blurCharacter();
+            blurCharacter(BLUR_RADIUS);
         } else {
             myBlurOn = false;
-            unblurCharacter();
+            blurCharacter(0);
         }
-    }
-
-    private void blurCharacter() {
-        GaussianBlur blur = new GaussianBlur(100);
-        myCurrentCharacterImageView.setEffect(blur);
-    }
-
-    private void unblurCharacter() {
-        GaussianBlur unblur = new GaussianBlur(0);
-        myCurrentCharacterImageView.setEffect(unblur);
     }
 
     /**
-     * One of the paddle's abilities, which reflects the ball based on the position it is hit at. If the ball is hit
-     * in the middle, it will bounce off in the opposite direction; if it hits to the left, it will bounce to the left;
-     * if it hits to the right, it will bounce to the right.
-     * @param ball the ball whose direction will be reflected by the paddle.
+     * Checks the collision between the paddle and the ball
+     * @param ballBounds the bounds of the ball that will be checked against the paddle
      */
-    public void reflectBall(Ball ball) {
-        if (ball.getDirection()[0] == 0) {
-            ball.getDirection()[0] = -1;
+    public boolean detectBallCollision (Bounds ballBounds) {
+        if (ballBounds.intersects(myCurrentCharacterImageView.getBoundsInParent()) &&
+                ballBounds.getMaxY() <= myCurrentCharacterImageView.getBoundsInParent().getMinY()) {
+            return true;
         }
-        if (ball.getBallImageView().getBoundsInParent().getCenterX() <= myCurrentCharacterImageView.getBoundsInParent().getCenterX() - THIRD_DIVISION) {
-            ball.getDirection()[0] = -1;
-            ball.getDirection()[1] = -1;
-        } else if (ball.getBallImageView().getBoundsInParent().getCenterX() >= myCurrentCharacterImageView.getBoundsInParent().getCenterX() + THIRD_DIVISION) {
-            ball.getDirection()[0] = 1;
-            ball.getDirection()[1] = -1;
-        } else {
-            ball.getDirection()[1] *= -1;
-        }
+        return false;
     }
 
     /**
@@ -180,5 +179,23 @@ public class Character {
      */
     public ImageView getDumbledoresArmyImageView() {
         return myDumbledoresArmyImageView;
+    }
+
+    private ImageView createCharacter(String characterImagePath, int characterWidth) {
+        Image image = new Image(this.getClass().getClassLoader().getResourceAsStream(characterImagePath));
+        ImageView characterImageView = new ImageView(image);
+        characterImageView.setFitWidth(characterWidth);
+        characterImageView.setFitHeight(CHARACTER_HEIGHT);
+        return characterImageView;
+    }
+
+    private void setCurrentCharacterAsPaddle() {
+        myCurrentCharacterImageView.setX(GameMain.SCENE_WIDTH / 2 - SINGLE_CHARACTER_WIDTH / 2);
+        myCurrentCharacterImageView.setY(GameMain.SCENE_HEIGHT - CHARACTER_HEIGHT);
+    }
+
+    private void blurCharacter(int radius) {
+        GaussianBlur blur = new GaussianBlur(radius);
+        myCurrentCharacterImageView.setEffect(blur);
     }
 }

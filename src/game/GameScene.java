@@ -195,7 +195,7 @@ public class GameScene {
             }
         }
         if (brickToDownsize != null) {
-            myBall.reflectBall(brickToDownsize);
+            myBall.reflectBallOffOfBricks(brickToDownsize);
             brickToDownsize.downsizeBrick(this);
         }
     }
