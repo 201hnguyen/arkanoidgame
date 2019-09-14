@@ -25,7 +25,9 @@ that method also had the power to directly change the position of the ball; beca
 full control of that class rather than taking that power and putting it in this class is a better design. However, the
 checking of the collision with the ball is moved to this class because this is something that the paddle can be
 responsible for.
-
+8) There are no static or public variables that are open to modification by other classes. All variables in this class
+are kept as private as possible unless modification is absolutely essential (e.g., another class can turn myBlurOn and
+off, but cannot modify any of the ImageViews besides just changing them out as the current).
  */
 package game;
 
