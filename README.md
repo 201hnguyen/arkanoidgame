@@ -1,7 +1,8 @@
-game
+Arkanoid/Breakout Game Implentation
 ====
 
-This project implements the game of Breakout.
+This project implements the game of Breakout/Arkanoid, and is completed as part of my
+Fall 2019 Advanced Software Design & Implementation class at Duke.
 
 Name: Ha Nguyen
 
@@ -92,34 +93,3 @@ to get to the bottom of the screen.
 
 Known Bugs:
 No known bugs at this time
-
-Extra credit: The extra feature implemented are the concept of "dead zones," 
-represented by the spikes/teeth on the screen. Hitting the dead zones will cause
-the player to lose a life,  decrease their score, and cause other discomfort. 
-Other extra features include new cheat keys, such as Dumbledore's Army, clear
-the bottom-most row, and loses and finds glasses mode.
-
-
-### Notes
-The design checklist specified "no static variable"; I'm not entirely clear why, and 
-I'm assuming (from Googling) that 
-it is because static variables breaks the purpose of object-oriented programming.
-Though I have made the effort to remove all other static variables I had, there is
-one private static variable in the GameMain class that I chose to leave in because 1) I felt
-it is the most efficient way of keeping a reference to the current game scene 
-as helper methods for the start method needs this, and 2) the variable is not used in any
-other class apart from the GameMain class; it is only helper methods in the GameMain class that
-had access to it. 
-
-### Impressions
-I think this project is a great way to begin the class! It's a great way to empower students who
-are just coming in, especially those like me to haven't created a substantial project by myself before;
-this helps me assess my programming skill a bit more and also helped me feel more confident in the rest
-of the class moving forward, regardless of what my score on the project will be. One thing I would say
-is it would be useful to make it clear from even the planning stage that graphics are not a huge part 
-of the game; I believe that wasn't made super clear until the actual implementation stage. At the planning
-stage, I was not super clear on what "a unique game" meant and assumed that would involve designing a game
-that is different from anything currently out there, including the graphics. Since I had already put it in
-my plan, and since I also started early, before the graphics instructions were given, I had already put the
-graphics in place already before hearing the message. It didn't take a lot of time (maybe 1-2 hours tops), 
-but it would still be nice information to have from the get-go.
